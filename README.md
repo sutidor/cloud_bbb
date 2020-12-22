@@ -72,6 +72,18 @@ for details.
 
 ![Screenshot file browser](https://github.com/sualko/cloud_bbb/raw/master/docs/screenshot-file-browser.png)
 
+## Shorten your room URL
+Admin option to define a forwarding server with shorter url.
+
+```
+ServerName room.foobar.com
+
+RewriteEngine on
+RewriteRule   "^/(\w+)"  "https://cloud.foobar-company.com/nextcloud/apps/bbb/b/$1"  [R=302,L]
+```
+
+https://room.foobar.com/Ek6YxBiwPzYroMbq ➡️ https://cloud.foobar-company.com/nextcloud/apps/bbb/b/Ek6YxBiwPzYroMbq
+
 ## :notebook: Notes
 - By using the [Link Editor](https://apps.nextcloud.com/apps/files_linkeditor)
   you can share rooms as any other file
