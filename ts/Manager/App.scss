@@ -346,3 +346,83 @@ pre {
 .bbb-input-container {
   display: flex;
 }
+
+// Transcript panel (shown below recording rows)
+.transcript-row {
+  background-color: var(--color-background-hover);
+
+  > td {
+    padding: 0 !important;
+  }
+}
+
+.bbb-transcript-panel {
+  padding: 12px 16px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.bbb-transcript-tabs {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 8px;
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 8px;
+}
+
+.bbb-transcript-tab {
+  border: 0;
+  background: transparent;
+  padding: 6px 12px;
+  cursor: pointer;
+  border-radius: 4px;
+  font-weight: normal;
+
+  &.active {
+    background-color: var(--color-primary-element);
+    color: var(--color-primary-text);
+    font-weight: bold;
+  }
+
+  &:hover:not(.active) {
+    background-color: var(--color-background-dark);
+  }
+}
+
+.bbb-transcript-meta {
+  margin-left: auto;
+  font-size: 0.85em;
+  opacity: 0.6;
+}
+
+.bbb-transcript-pre {
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-size: 0.9em;
+  line-height: 1.5;
+  max-height: 300px;
+  overflow-y: auto;
+  margin: 0;
+  padding: 8px 12px;
+  background-color: var(--color-background-dark);
+  border-radius: 4px;
+}
+
+.bbb-transcript-downloads {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--color-border);
+
+  .button {
+    font-size: 0.85em;
+    padding: 4px 10px;
+  }
+}
+
+.bbb-transcript-error {
+  color: var(--color-error);
+  padding: 8px;
+}

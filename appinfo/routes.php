@@ -19,5 +19,10 @@ return [
 		['name' => 'restriction#user', 'url' => '/restrictions/user', 'verb' => 'GET'],
 		['name' => 'hook#meetingEnded', 'url' => '/hook/ended/{token}/{mac}', 'verb' => 'GET'],
 		['name' => 'hook#recordingReady', 'url' => '/hook/recording/{token}/{mac}', 'verb' => 'POST'],
+		// Transcript endpoints
+		['name' => 'transcript#batch', 'url' => '/api/transcript/batch', 'verb' => 'GET'],
+		['name' => 'transcript#get', 'url' => '/api/transcript/{recordingId}', 'verb' => 'GET'],
+		['name' => 'transcript#getText', 'url' => '/api/transcript/{recordingId}/text', 'verb' => 'GET'],
+		['name' => 'transcript#receive', 'url' => '/api/transcript/{recordingId}', 'verb' => 'POST'],
 	]
 ];

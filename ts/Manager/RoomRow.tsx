@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-import { api, Recording, Room, Restriction, Access, Permission } from '../Common/Api';
+import { api, Recording, Room, Restriction, Access, Permission, TranscriptStatus } from '../Common/Api';
 import EditRoom from './EditRoom';
 import RecordingRow from './RecordingRow';
 import EditableValue from './EditableValue';
@@ -39,6 +39,7 @@ const RecordingsNumber = ({ recordings, showRecordings, setShowRecordings }: Rec
 const RoomRow = (props: Props): JSX.Element => {
 	const [recordings, setRecordings] = useState<Recording[] | null>(null);
 	const [showRecordings, setShowRecordings] = useState<boolean>(false);
+	const [transcriptStatuses, setTranscriptStatuses] = useState<Record<string, TranscriptStatus>>({});
 	const room = props.room;
 	const areRecordingsLoaded = recordings !== null;
 
@@ -49,6 +50,16 @@ const RoomRow = (props: Props): JSX.Element => {
 
 		api.getRecordings(room.uid).then(recordings => {
 			setRecordings(recordings);
+
+			// Batch-fetch transcript statuses for all recordings
+			if (recordings.length > 0) {
+				const ids = recordings.map(r => r.id);
+				api.getTranscriptStatuses(ids).then(statuses => {
+					setTranscriptStatuses(statuses);
+				}).catch(err => {
+					console.warn('Could not fetch transcript statuses', err);
+				});
+			}
 		}).catch(err => {
 			console.warn('Could not request recordings: ' + room.uid, err);
 
@@ -288,7 +299,7 @@ const RoomRow = (props: Props): JSX.Element => {
 				<td colSpan={11}>
 					<table>
 						<tbody>
-							{recordings?.sort((r1, r2) => r1.startTime - r2.startTime).map(recording => <RecordingRow key={recording.id} isAdmin={adminRoom} recording={recording} deleteRecording={deleteRecording} storeRecording={storeRecording} publishRecording={publishRecording} />)}
+							{recordings?.sort((r1, r2) => r1.startTime - r2.startTime).map(recording => <RecordingRow key={recording.id} isAdmin={adminRoom} recording={recording} transcriptStatus={transcriptStatuses[recording.id]} deleteRecording={deleteRecording} storeRecording={storeRecording} publishRecording={publishRecording} />)}
 						</tbody>
 					</table>
 				</td>

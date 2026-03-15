@@ -71,6 +71,22 @@ export type Recording = {
 	meta: any;
 }
 
+export type TranscriptStatus = {
+	status: 'processing' | 'complete' | 'partial' | 'failed';
+	language: string;
+	updatedAt: number;
+}
+
+export type TranscriptDetail = {
+	id: number;
+	recordingId: string;
+	notesMd: string;
+	language: string;
+	status: string;
+	createdAt: number;
+	updatedAt: number;
+}
+
 export interface ShareWithOption {
 	label: string;
 	value: {
@@ -285,6 +301,28 @@ class Api {
 				circles: response.data.ocs.data.exact.circles || [],
 			},
 		};
+	}
+
+	public async getTranscriptStatuses(recordingIds: string[]): Promise<Record<string, TranscriptStatus>> {
+		if (recordingIds.length === 0) {
+			return {};
+		}
+		const response = await axios.get(this.getUrl('api/transcript/batch'), {
+			params: { ids: recordingIds.join(',') },
+		});
+		return response.data;
+	}
+
+	public async getTranscript(recordingId: string): Promise<TranscriptDetail> {
+		const response = await axios.get(this.getUrl(`api/transcript/${recordingId}`));
+		return response.data;
+	}
+
+	public async getTranscriptText(recordingId: string, format: 'txt' | 'vtt' = 'txt'): Promise<string> {
+		const response = await axios.get(this.getUrl(`api/transcript/${recordingId}/text`), {
+			params: { format },
+		});
+		return response.data.content;
 	}
 
 	public async searchShareWith(search = '', shareType: ShareType[] = [OC.Share.SHARE_TYPE_USER, OC.Share.SHARE_TYPE_GROUP]): Promise<ShareWith> {
