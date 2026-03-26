@@ -23,6 +23,8 @@ return [
 		['name' => 'transcript#batch', 'url' => '/api/transcript/batch', 'verb' => 'GET'],
 		['name' => 'transcript#get', 'url' => '/api/transcript/{recordingId}', 'verb' => 'GET'],
 		['name' => 'transcript#getText', 'url' => '/api/transcript/{recordingId}/text', 'verb' => 'GET'],
+		['name' => 'transcript#content', 'url' => '/api/transcript/{recordingId}/{kind}', 'verb' => 'GET'],
+		['name' => 'transcript#download', 'url' => '/api/transcript/{recordingId}/download/{kind}', 'verb' => 'GET'],
 		['name' => 'transcript#receive', 'url' => '/api/transcript/{recordingId}', 'verb' => 'POST'],
 	]
 ];

@@ -13,8 +13,9 @@ use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\Attribute\NoCSRFRequired;
 use OCP\AppFramework\Http\Attribute\PublicPage;
+use OCP\AppFramework\Http\DataDownloadResponse;
 use OCP\AppFramework\Http\DataResponse;
-use OCP\IConfig;
+use OCP\IAppConfig;
 use OCP\IRequest;
 
 class TranscriptController extends Controller {
@@ -22,7 +23,7 @@ class TranscriptController extends Controller {
 	private API $server;
 	private Permission $permission;
 	private RoomService $roomService;
-	private IConfig $config;
+	private IAppConfig $appConfig;
 	private ?string $userId;
 
 	public function __construct(
@@ -32,7 +33,7 @@ class TranscriptController extends Controller {
 		API $server,
 		Permission $permission,
 		RoomService $roomService,
-		IConfig $config,
+		IAppConfig $appConfig,
 		?string $userId
 	) {
 		parent::__construct($appName, $request);
@@ -40,7 +41,7 @@ class TranscriptController extends Controller {
 		$this->server = $server;
 		$this->permission = $permission;
 		$this->roomService = $roomService;
-		$this->config = $config;
+		$this->appConfig = $appConfig;
 		$this->userId = $userId;
 	}
 
@@ -84,6 +85,81 @@ class TranscriptController extends Controller {
 	}
 
 	/**
+	 * Get full transcript or notes content for display.
+	 */
+	#[NoAdminRequired]
+	public function content(string $recordingId, string $kind): DataResponse {
+		if (!$this->userCanAccessRecording($recordingId)) {
+			return new DataResponse([], Http::STATUS_FORBIDDEN);
+		}
+
+		try {
+			$transcript = $this->mapper->findByRecordingId($recordingId);
+		} catch (DoesNotExistException $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		switch ($kind) {
+			case 'transcript':
+				return new DataResponse([
+					'content' => $transcript->getTranscriptTxt(),
+					'language' => $transcript->getLanguage(),
+				]);
+			case 'notes':
+				return new DataResponse([
+					'content' => $transcript->getNotesMd(),
+					'language' => $transcript->getLanguage(),
+				]);
+			case 'vtt':
+				return new DataResponse([
+					'content' => $transcript->getTranscriptVtt(),
+					'language' => $transcript->getLanguage(),
+				]);
+			default:
+				return new DataResponse(['error' => 'invalid kind'], Http::STATUS_BAD_REQUEST);
+		}
+	}
+
+	/**
+	 * Download transcript or notes as a file.
+	 */
+	#[NoAdminRequired]
+	public function download(string $recordingId, string $kind): DataDownloadResponse|DataResponse {
+		if (!$this->userCanAccessRecording($recordingId)) {
+			return new DataResponse([], Http::STATUS_FORBIDDEN);
+		}
+
+		try {
+			$transcript = $this->mapper->findByRecordingId($recordingId);
+		} catch (DoesNotExistException $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		switch ($kind) {
+			case 'transcript_vtt':
+				return new DataDownloadResponse(
+					$transcript->getTranscriptVtt() ?? '',
+					'transcript.vtt',
+					'text/vtt'
+				);
+			case 'transcript_txt':
+				return new DataDownloadResponse(
+					$transcript->getTranscriptTxt() ?? '',
+					'transcript.txt',
+					'text/plain'
+				);
+			case 'notes_md':
+				return new DataDownloadResponse(
+					$transcript->getNotesMd() ?? '',
+					'notes.md',
+					'text/markdown'
+				);
+			default:
+				return new DataResponse(['error' => 'invalid kind'], Http::STATUS_BAD_REQUEST);
+		}
+	}
+
+	/**
 	 * Batch-check transcript status for multiple recording IDs.
 	 * Returns a map of recordingId => {status, language, updatedAt}.
 	 */
@@ -116,7 +192,7 @@ class TranscriptController extends Controller {
 	#[NoCSRFRequired]
 	public function receive(string $recordingId): DataResponse {
 		// Verify shared secret
-		$secret = $this->config->getAppValue('bbb', 'transcript_secret', '');
+		$secret = $this->appConfig->getValueString('bbb', 'transcript_secret', '');
 		$authHeader = $this->request->getHeader('Authorization');
 
 		if (empty($secret) || $authHeader !== 'Bearer ' . $secret) {

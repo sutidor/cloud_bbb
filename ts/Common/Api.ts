@@ -80,11 +80,17 @@ export type TranscriptStatus = {
 export type TranscriptDetail = {
 	id: number;
 	recordingId: string;
-	notesMd: string;
 	language: string;
 	status: string;
+	hasTranscript: boolean;
+	hasNotes: boolean;
 	createdAt: number;
 	updatedAt: number;
+}
+
+export type TranscriptContent = {
+	content: string;
+	language: string;
 }
 
 export interface ShareWithOption {
@@ -323,6 +329,15 @@ class Api {
 			params: { format },
 		});
 		return response.data.content;
+	}
+
+	public async getTranscriptContent(recordingId: string, kind: 'transcript' | 'notes' | 'vtt'): Promise<TranscriptContent> {
+		const response = await axios.get(this.getUrl(`api/transcript/${recordingId}/${kind}`));
+		return response.data;
+	}
+
+	public getTranscriptDownloadUrl(recordingId: string, kind: 'transcript_vtt' | 'transcript_txt' | 'notes_md'): string {
+		return this.getUrl(`api/transcript/${recordingId}/download/${kind}`);
 	}
 
 	public async searchShareWith(search = '', shareType: ShareType[] = [OC.Share.SHARE_TYPE_USER, OC.Share.SHARE_TYPE_GROUP]): Promise<ShareWith> {
