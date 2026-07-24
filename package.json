@@ -58,7 +58,7 @@
 	"husky": {
 		"hooks": {
 			"pre-commit": "npm run lint",
-			"pre-push": "npm run test:php:unit",
+			"pre-push": "test -f ../../../lib/base.php && npm run test:php:unit || echo 'cloud_bbb: skipping phpunit (no Nextcloud core in this checkout; CI runs it)'",
 			"commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
 		}
 	},
