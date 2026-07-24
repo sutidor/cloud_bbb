@@ -25,6 +25,8 @@ return [
 		['name' => 'transcript#getText', 'url' => '/api/transcript/{recordingId}/text', 'verb' => 'GET'],
 		['name' => 'transcript#content', 'url' => '/api/transcript/{recordingId}/{kind}', 'verb' => 'GET'],
 		['name' => 'transcript#download', 'url' => '/api/transcript/{recordingId}/download/{kind}', 'verb' => 'GET'],
+		['name' => 'transcript#updateTitle', 'url' => '/api/transcript/{recordingId}/title', 'verb' => 'PUT'],
+		['name' => 'transcript#send', 'url' => '/api/transcript/{recordingId}/send', 'verb' => 'POST'],
 		['name' => 'transcript#receive', 'url' => '/api/transcript/{recordingId}', 'verb' => 'POST'],
 	]
 ];

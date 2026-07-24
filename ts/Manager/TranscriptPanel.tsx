@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { showSuccess, showError } from '@nextcloud/dialogs';
 import { api, TranscriptContent } from '../Common/Api';
 
 type Props = {
@@ -12,6 +13,24 @@ const TranscriptPanel = ({ recordingId }: Props): JSX.Element => {
 	const [content, setContent] = useState<TranscriptContent | null>(null);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
+	const [sending, setSending] = useState(false);
+
+	async function sendToParticipants() {
+		setSending(true);
+		try {
+			const sent = await api.sendTranscriptEmail(recordingId);
+			if (sent > 0) {
+				showSuccess(n('bbb', 'Minutes sent to %n participant', 'Minutes sent to %n participants', sent));
+			} else {
+				showError(t('bbb', 'No participants with a Nextcloud account to email'));
+			}
+		} catch (err) {
+			console.warn('Could not send minutes', err);
+			showError(t('bbb', 'Could not send minutes'));
+		} finally {
+			setSending(false);
+		}
+	}
 
 	useEffect(() => {
 		loadContent(tab);
@@ -109,6 +128,10 @@ const TranscriptPanel = ({ recordingId }: Props): JSX.Element => {
 					<span className="icon icon-download icon-visible"></span>
 					{t('bbb', 'Subtitles (.vtt)')}
 				</a>
+				<button className="button primary bbb-send-minutes" onClick={sendToParticipants} disabled={sending}>
+					<span className={'icon icon-visible ' + (sending ? 'icon-loading-small' : 'icon-mail')}></span>
+					{t('bbb', 'Send to participants')}
+				</button>
 			</div>
 		</div>
 	);

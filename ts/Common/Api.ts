@@ -71,9 +71,18 @@ export type Recording = {
 	meta: any;
 }
 
+export type Participant = {
+	name: string;
+	extId: string;
+	role: string;
+	talkSeconds: number;
+}
+
 export type TranscriptStatus = {
 	status: 'processing' | 'complete' | 'partial' | 'failed';
 	language: string;
+	title: string;
+	participants: Participant[];
 	updatedAt: number;
 }
 
@@ -82,8 +91,11 @@ export type TranscriptDetail = {
 	recordingId: string;
 	language: string;
 	status: string;
+	title: string;
+	participants: Participant[];
 	hasTranscript: boolean;
 	hasNotes: boolean;
+	notifiedAt: number | null;
 	createdAt: number;
 	updatedAt: number;
 }
@@ -338,6 +350,16 @@ class Api {
 
 	public getTranscriptDownloadUrl(recordingId: string, kind: 'transcript_vtt' | 'transcript_txt' | 'notes_md'): string {
 		return this.getUrl(`api/transcript/${recordingId}/download/${kind}`);
+	}
+
+	public async updateTranscriptTitle(recordingId: string, title: string): Promise<string> {
+		const response = await axios.put(this.getUrl(`api/transcript/${recordingId}/title`), { title });
+		return response.data.title;
+	}
+
+	public async sendTranscriptEmail(recordingId: string): Promise<number> {
+		const response = await axios.post(this.getUrl(`api/transcript/${recordingId}/send`), {});
+		return response.data.sent;
 	}
 
 	public async searchShareWith(search = '', shareType: ShareType[] = [OC.Share.SHARE_TYPE_USER, OC.Share.SHARE_TYPE_GROUP]): Promise<ShareWith> {

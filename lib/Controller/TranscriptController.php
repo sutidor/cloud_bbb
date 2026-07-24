@@ -2,11 +2,12 @@
 
 namespace OCA\BigBlueButton\Controller;
 
+use OCA\BigBlueButton\BigBlueButton\API;
 use OCA\BigBlueButton\Db\Transcript;
 use OCA\BigBlueButton\Db\TranscriptMapper;
-use OCA\BigBlueButton\BigBlueButton\API;
 use OCA\BigBlueButton\Permission;
 use OCA\BigBlueButton\Service\RoomService;
+use OCA\BigBlueButton\Service\TranscriptMailService;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Http;
@@ -20,11 +21,14 @@ use OCP\IAppConfig;
 use OCP\IRequest;
 
 class TranscriptController extends Controller {
+	private const BATCH_MAX_IDS = 100;
+
 	private TranscriptMapper $mapper;
 	private API $server;
 	private Permission $permission;
 	private RoomService $roomService;
 	private IAppConfig $appConfig;
+	private TranscriptMailService $mailService;
 	private ?string $userId;
 
 	public function __construct(
@@ -35,6 +39,7 @@ class TranscriptController extends Controller {
 		Permission $permission,
 		RoomService $roomService,
 		IAppConfig $appConfig,
+		TranscriptMailService $mailService,
 		?string $userId
 	) {
 		parent::__construct($appName, $request);
@@ -43,6 +48,7 @@ class TranscriptController extends Controller {
 		$this->permission = $permission;
 		$this->roomService = $roomService;
 		$this->appConfig = $appConfig;
+		$this->mailService = $mailService;
 		$this->userId = $userId;
 	}
 
@@ -164,8 +170,6 @@ class TranscriptController extends Controller {
 	 * Batch-check transcript status for multiple recording IDs.
 	 * Returns a map of recordingId => {status, language, updatedAt}.
 	 */
-	private const BATCH_MAX_IDS = 100;
-
 	#[NoAdminRequired]
 	public function batch(string $ids): DataResponse {
 		$recordingIds = array_filter(explode(',', $ids));
@@ -189,6 +193,8 @@ class TranscriptController extends Controller {
 			$result[$recId] = [
 				'status' => $t->getStatus(),
 				'language' => $t->getLanguage(),
+				'title' => $t->getTitle(),
+				'participants' => $t->getParticipantList(),
 				'updatedAt' => $t->getUpdatedAt(),
 			];
 		}
@@ -227,6 +233,9 @@ class TranscriptController extends Controller {
 		$transcriptTxt = $this->request->getParam('transcript_txt', '');
 		$notesMd = $this->request->getParam('notes_md', '');
 		$language = $this->request->getParam('language', '');
+		$title = (string)$this->request->getParam('title', '');
+		$participants = $this->request->getParam('participants', '');
+		$sendEmail = $this->request->getParam('send_email', '0') === '1';
 		$now = time();
 
 		try {
@@ -244,6 +253,13 @@ class TranscriptController extends Controller {
 			if (!empty($language)) {
 				$transcript->setLanguage($language);
 			}
+			// Don't overwrite a title the user has manually edited
+			if ($title !== '' && !$transcript->getTitleLocked()) {
+				$transcript->setTitle($title);
+			}
+			if (is_string($participants) && $participants !== '') {
+				$transcript->setParticipants($participants);
+			}
 			$transcript->setStatus($status);
 			$transcript->setUpdatedAt($now);
 			$this->mapper->update($transcript);
@@ -255,13 +271,83 @@ class TranscriptController extends Controller {
 			$transcript->setTranscriptTxt($transcriptTxt);
 			$transcript->setNotesMd($notesMd);
 			$transcript->setLanguage($language);
+			$transcript->setTitle($title);
+			$transcript->setTitleLocked(false);
+			$transcript->setParticipants(is_string($participants) ? $participants : '');
 			$transcript->setStatus($status);
 			$transcript->setCreatedAt($now);
 			$transcript->setUpdatedAt($now);
 			$this->mapper->insert($transcript);
 		}
 
+		// Auto-email minutes once, only when the pipeline says it's within the
+		// same-day window (backfill/reprocessing sets send_email=0).
+		if ($sendEmail
+			&& $status === Transcript::STATUS_COMPLETE
+			&& empty($transcript->getNotifiedAt())) {
+			$this->mailService->notifyParticipants($transcript);
+			$transcript->setNotifiedAt($now);
+			$this->mapper->update($transcript);
+		}
+
 		return new DataResponse(['status' => 'ok']);
+	}
+
+	/**
+	 * Update the meeting title (user edit). Locks it against future
+	 * pipeline overwrites.
+	 */
+	#[NoAdminRequired]
+	public function updateTitle(string $recordingId): DataResponse {
+		if (!$this->userCanAccessRecording($recordingId)) {
+			return new DataResponse([], Http::STATUS_FORBIDDEN);
+		}
+
+		$title = (string)$this->request->getParam('title', '');
+		$title = trim($title);
+		if ($title === '' || mb_strlen($title) > 191) {
+			return new DataResponse(['error' => 'invalid title'], Http::STATUS_BAD_REQUEST);
+		}
+
+		try {
+			$transcript = $this->mapper->findByRecordingId($recordingId);
+		} catch (DoesNotExistException $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		$transcript->setTitle($title);
+		$transcript->setTitleLocked(true);
+		$transcript->setUpdatedAt(time());
+		$this->mapper->update($transcript);
+
+		return new DataResponse(['title' => $title]);
+	}
+
+	/**
+	 * Manually email the minutes to the meeting's participants (the
+	 * "Send to participants" button). Bypasses the same-day auto-gate.
+	 */
+	#[NoAdminRequired]
+	public function send(string $recordingId): DataResponse {
+		if (!$this->userCanAccessRecording($recordingId)) {
+			return new DataResponse([], Http::STATUS_FORBIDDEN);
+		}
+
+		try {
+			$transcript = $this->mapper->findByRecordingId($recordingId);
+		} catch (DoesNotExistException $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		if ($transcript->getStatus() !== Transcript::STATUS_COMPLETE) {
+			return new DataResponse(['error' => 'not ready'], Http::STATUS_BAD_REQUEST);
+		}
+
+		$sent = $this->mailService->notifyParticipants($transcript);
+		$transcript->setNotifiedAt(time());
+		$this->mapper->update($transcript);
+
+		return new DataResponse(['sent' => $sent]);
 	}
 
 	/**
