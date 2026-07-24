@@ -22,7 +22,7 @@ Contributors are welcome! If you have time it would be awesome if you could help
 
 *This app integrates BigBlueButton and is not endorsed or certified by BigBlueButton Inc. BigBlueButton and the BigBlueButton Logo are trademarks of BigBlueButton Inc.*
     ]]></description>
-    <version>2.9.2</version>
+    <version>2.9.3</version>
     <licence>agpl</licence>
     <author mail="cloud_bbb@arawa.fr" homepage="https://arawa.fr/">Arawa</author>
     <author>Klaus Herberth</author>
@@ -49,6 +49,9 @@ Contributors are welcome! If you have time it would be awesome if you could help
     <commands>
         <command>OCA\BigBlueButton\Command\ClearAvatarCache</command>
     </commands>
+    <background-jobs>
+        <job>OCA\BigBlueButton\BackgroundJob\DeleteOldRecordingsJob</job>
+    </background-jobs>
     <settings>
         <admin>OCA\BigBlueButton\Settings\Admin</admin>
         <personal-section>OCA\BigBlueButton\Settings\Section</personal-section>

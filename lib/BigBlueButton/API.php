@@ -11,6 +11,7 @@ use BigBlueButton\Parameters\InsertDocumentParameters;
 use BigBlueButton\Parameters\IsMeetingRunningParameters;
 use BigBlueButton\Parameters\JoinMeetingParameters;
 use BigBlueButton\Parameters\PublishRecordingsParameters;
+use BigBlueButton\Parameters\UpdateRecordingsParameters;
 use OCA\BigBlueButton\AppInfo\Application;
 use OCA\BigBlueButton\AvatarRepository;
 use OCA\BigBlueButton\Crypto;
@@ -234,6 +235,41 @@ class API {
 	}
 
 	/**
+	 * Set a metadata flag on a recording (e.g. persist=true so retention
+	 * cleanup skips it). Stored in BBB itself, so it is authoritative and
+	 * visible in getRecordings.
+	 */
+	public function updateRecordingMeta(string $recordingId, string $key, string $value): bool {
+		$params = new UpdateRecordingsParameters($recordingId);
+		$params->addMeta($key, $value);
+
+		$response = $this->getServer()->updateRecordings($params);
+
+		return $response->isUpdated();
+	}
+
+	/**
+	 * All published recordings on the server (no room filter) — used by the
+	 * retention cleanup job.
+	 *
+	 * @return array[]
+	 */
+	public function getAllRecordings(): array {
+		$recordingParams = new GetRecordingsParameters();
+		$recordingParams->setState('published');
+
+		$response = $this->getServer()->getRecordings($recordingParams);
+
+		if (!$response->success()) {
+			return [];
+		}
+
+		return array_map(function ($record) {
+			return $this->recordToArray($record);
+		}, $response->getRecords());
+	}
+
+	/**
 	 * @return (array|bool|int|string)[]
 	 *
 	 * @psalm-return array{id: string, meetingId: string, name: string, published: bool, state: string, startTime: string, participants: int, type: string, length: string, url: string, metas: array}
@@ -251,6 +287,7 @@ class API {
 			'length' => $record->getPlaybackLength(),
 			'url' => $record->getPlaybackUrl(),
 			'metas' => $record->getMetas(),
+			'persist' => (($record->getMetas()['persist'] ?? '') === 'true'),
 		];
 	}
 

@@ -28,9 +28,11 @@ class TranscriptMailService {
 	}
 
 	/**
+	 * @param string|null $roomUid deep-link the "Open in Nextcloud" button to
+	 *                             this room (anchor), if known
 	 * @return int number of recipients the minutes were sent to
 	 */
-	public function notifyParticipants(Transcript $transcript): int {
+	public function notifyParticipants(Transcript $transcript, ?string $roomUid = null): int {
 		$recipients = $this->resolveRecipients($transcript);
 		if (empty($recipients)) {
 			$this->logger->info('bbb transcript mail: no matching Nextcloud recipients', [
@@ -41,6 +43,10 @@ class TranscriptMailService {
 
 		$heading = $this->buildHeading($transcript);
 		$link = $this->urlGenerator->linkToRouteAbsolute('bbb.page.index');
+		if ($roomUid !== null && $roomUid !== '') {
+			// deep-link: the app expands + scrolls to this room on load
+			$link .= '#room-' . rawurlencode($roomUid);
+		}
 		$notesHtml = $this->markdownToHtml((string)$transcript->getNotesMd());
 		$plain = (string)$transcript->getNotesMd();
 

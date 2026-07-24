@@ -151,6 +151,28 @@ class ServerController extends Controller {
 		return new DataResponse($success);
 	}
 
+	/**
+	 * Mark a recording as persisted (retention cleanup will skip it) or not.
+	 */
+	#[NoAdminRequired]
+	public function persistRecord(string $recordId, bool $persist): DataResponse {
+		$record = $this->server->getRecording($recordId);
+
+		$room = $this->service->findByUid($record['meetingId']);
+
+		if ($room === null) {
+			return new DataResponse(false, Http::STATUS_NOT_FOUND);
+		}
+
+		if (!$this->permission->isAdmin($room, $this->userId)) {
+			return new DataResponse(false, Http::STATUS_FORBIDDEN);
+		}
+
+		$success = $this->server->updateRecordingMeta($recordId, 'persist', $persist ? 'true' : 'false');
+
+		return new DataResponse($success);
+	}
+
 	public function check(?string $url, ?string $secret): DataResponse {
 		if ($url === null || empty($url) || $secret === null || empty($secret)) {
 			return new DataResponse(false);

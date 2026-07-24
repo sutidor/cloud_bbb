@@ -69,6 +69,7 @@ export type Recording = {
 	length: number;
 	url: string;
 	meta: any;
+	persist: boolean;
 }
 
 export type Participant = {
@@ -239,6 +240,14 @@ class Api {
 	public async publishRecording(id: string, publish: boolean) {
 		const response = await axios.post(this.getUrl(`server/record/${id}/publish`), {
 			published: publish,
+		});
+
+		return response.data;
+	}
+
+	public async persistRecording(id: string, persist: boolean) {
+		const response = await axios.post(this.getUrl(`server/record/${id}/persist`), {
+			persist,
 		});
 
 		return response.data;

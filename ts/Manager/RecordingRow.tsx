@@ -35,6 +35,18 @@ const RecordingRow = ({recording, isAdmin, transcriptStatus, deleteRecording, st
 	const [title, setTitle] = useState(transcriptStatus?.title || '');
 	const [editingTitle, setEditingTitle] = useState(false);
 	const [titleDraft, setTitleDraft] = useState('');
+	const [persist, setPersist] = useState(recording.persist);
+
+	async function togglePersist(next: boolean) {
+		setPersist(next); // optimistic
+		try {
+			await api.persistRecording(recording.id, next);
+		} catch (err) {
+			console.warn('Could not change persist flag', err);
+			setPersist(!next); // roll back
+			showError(t('bbb', 'Could not change the keep setting'));
+		}
+	}
 
 	const participants = transcriptStatus?.participants || [];
 
@@ -188,6 +200,21 @@ const RecordingRow = ({recording, isAdmin, transcriptStatus, deleteRecording, st
 						publishRecording(recording, checked);
 					})}
 				</td>
+				<td className="bbb-keep-col">
+					{isAdmin &&
+						<div>
+							<input id={'bbb-record-keep-' + recording.id}
+								type="checkbox"
+								className="checkbox"
+								checked={persist}
+								onChange={(event) => togglePersist(event.target.checked)} />
+							<label htmlFor={'bbb-record-keep-' + recording.id}
+								title={t('bbb', 'Keep this recording (exclude from auto-deletion)')}>
+								{t('bbb', 'Keep')}
+							</label>
+						</div>
+					}
+				</td>
 				<td className="remove icon-col">
 					{isAdmin &&
 						<button className="action-item" onClick={() => deleteRecording(recording)} title={t('bbb', 'Delete')}>
@@ -198,7 +225,7 @@ const RecordingRow = ({recording, isAdmin, transcriptStatus, deleteRecording, st
 			</tr>
 			{showTranscript && (
 				<tr className="transcript-row">
-					<td colSpan={11}>
+					<td colSpan={12}>
 						<TranscriptPanel recordingId={recording.id} />
 					</td>
 				</tr>

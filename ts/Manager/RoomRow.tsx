@@ -43,6 +43,17 @@ const RoomRow = (props: Props): JSX.Element => {
 	const room = props.room;
 	const areRecordingsLoaded = recordings !== null;
 
+	// Deep-link from the minutes email (#room-<uid>): expand + scroll to it
+	useEffect(() => {
+		if (window.location.hash === '#room-' + room.uid) {
+			setShowRecordings(true);
+			setTimeout(() => {
+				document.getElementById('room-' + room.uid)
+					?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+			}, 400);
+		}
+	}, [room.uid]);
+
 	useEffect(() => {
 		if (areRecordingsLoaded) {
 			return;
@@ -230,7 +241,7 @@ const RoomRow = (props: Props): JSX.Element => {
 
 	return (
 		<>
-			<tr className={showRecordings ? 'selected-row' : ''}>
+			<tr id={'room-' + room.uid} className={showRecordings ? 'selected-row' : ''}>
 				<td className="start">
 					<a href={api.getRoomUrl(room)}
 						className={'button ' + (room.running ? 'success' : 'primary')}

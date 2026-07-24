@@ -285,7 +285,7 @@ class TranscriptController extends Controller {
 		if ($sendEmail
 			&& $status === Transcript::STATUS_COMPLETE
 			&& empty($transcript->getNotifiedAt())) {
-			$this->mailService->notifyParticipants($transcript);
+			$this->mailService->notifyParticipants($transcript, $this->resolveRoomUid($recordingId));
 			$transcript->setNotifiedAt($now);
 			$this->mapper->update($transcript);
 		}
@@ -343,11 +343,22 @@ class TranscriptController extends Controller {
 			return new DataResponse(['error' => 'not ready'], Http::STATUS_BAD_REQUEST);
 		}
 
-		$sent = $this->mailService->notifyParticipants($transcript);
+		$sent = $this->mailService->notifyParticipants($transcript, $this->resolveRoomUid($recordingId));
 		$transcript->setNotifiedAt(time());
 		$this->mapper->update($transcript);
 
 		return new DataResponse(['sent' => $sent]);
+	}
+
+	/** Resolve a recording to its room uid (for email deep-links), or null. */
+	private function resolveRoomUid(string $recordingId): ?string {
+		try {
+			$record = $this->server->getRecording($recordingId);
+			$room = $this->roomService->findByUid($record['meetingId']);
+			return $room?->uid;
+		} catch (\Exception $e) {
+			return null;
+		}
 	}
 
 	/**
