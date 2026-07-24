@@ -39,8 +39,7 @@ class TranscriptMailService {
 			return 0;
 		}
 
-		$title = $transcript->getTitle() ?: $this->l10n->t('Meeting minutes');
-		$subject = $this->l10n->t('Meeting minutes: %s', [$title]);
+		$heading = $this->buildHeading($transcript);
 		$link = $this->urlGenerator->linkToRouteAbsolute('bbb.page.index');
 		$notesHtml = $this->markdownToHtml((string)$transcript->getNotesMd());
 		$plain = (string)$transcript->getNotesMd();
@@ -49,15 +48,15 @@ class TranscriptMailService {
 		foreach ($recipients as $email => $name) {
 			try {
 				$message = $this->mailer->createMessage();
-				$message->setSubject($subject);
+				$message->setSubject($heading);
 				$message->setTo([$email => $name]);
 
 				$template = $this->mailer->createEMailTemplate('bbb.TranscriptMinutes', [
-					'title' => $title,
+					'title' => $heading,
 				]);
-				$template->setSubject($subject);
+				$template->setSubject($heading);
 				$template->addHeader();
-				$template->addHeading($title);
+				$template->addHeading($heading);
 				$template->addBodyText($notesHtml, $plain);
 				$template->addBodyButton($this->l10n->t('Open in Nextcloud'), $link);
 				$template->addFooter();
@@ -78,6 +77,27 @@ class TranscriptMailService {
 			'recipients' => $sent,
 		]);
 		return $sent;
+	}
+
+	/**
+	 * Subject + heading: "📃 Meeting Minutes: <slug> <date>" (EN) /
+	 * "📃 Meeting Protokoll: <slug> <date>" (DE), date in the meeting's locale.
+	 */
+	private function buildHeading(Transcript $transcript): string {
+		$de = $transcript->getLanguage() === 'de';
+		$word = $de ? 'Protokoll' : 'Minutes';
+		$slug = $transcript->getTitle() ?: ($de ? 'Besprechung' : 'Meeting');
+
+		// Meeting time is the epoch-ms suffix of the recording id; fall back to
+		// the row's created_at.
+		$parts = explode('-', $transcript->getRecordingId());
+		$suffix = end($parts);
+		$ts = ctype_digit((string)$suffix)
+			? (int)((int)$suffix / 1000)
+			: (int)$transcript->getCreatedAt();
+		$date = $de ? date('d.m.Y', $ts) : date('M j, Y', $ts);
+
+		return sprintf('📃 Meeting %s: %s %s', $word, $slug, $date);
 	}
 
 	/**
