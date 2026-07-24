@@ -49,7 +49,7 @@ class Transcript extends Entity implements JsonSerializable {
 			'recordingId' => $this->recordingId,
 			'language' => $this->language,
 			'status' => $this->status,
-			'hasTranscript' => !empty($this->transcriptTxt),
+			'hasTranscript' => !empty($this->transcriptTxt) || !empty($this->transcriptVtt),
 			'hasNotes' => !empty($this->notesMd),
 			'createdAt' => $this->createdAt,
 			'updatedAt' => $this->updatedAt,

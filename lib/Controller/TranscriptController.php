@@ -10,6 +10,7 @@ use OCA\BigBlueButton\Service\RoomService;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\BruteForceProtection;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\Attribute\NoCSRFRequired;
 use OCP\AppFramework\Http\Attribute\PublicPage;
@@ -163,9 +164,20 @@ class TranscriptController extends Controller {
 	 * Batch-check transcript status for multiple recording IDs.
 	 * Returns a map of recordingId => {status, language, updatedAt}.
 	 */
+	private const BATCH_MAX_IDS = 100;
+
 	#[NoAdminRequired]
 	public function batch(string $ids): DataResponse {
 		$recordingIds = array_filter(explode(',', $ids));
+		if (empty($recordingIds) || count($recordingIds) > self::BATCH_MAX_IDS) {
+			return new DataResponse([]);
+		}
+
+		// Only report on recordings the user is allowed to see
+		$recordingIds = array_values(array_filter(
+			$recordingIds,
+			fn (string $id): bool => $this->userCanAccessRecording($id)
+		));
 		if (empty($recordingIds)) {
 			return new DataResponse([]);
 		}
@@ -190,16 +202,27 @@ class TranscriptController extends Controller {
 	 */
 	#[PublicPage]
 	#[NoCSRFRequired]
+	#[BruteForceProtection(action: 'bbbTranscriptReceive')]
 	public function receive(string $recordingId): DataResponse {
-		// Verify shared secret
+		// Verify shared secret (constant-time comparison)
 		$secret = $this->appConfig->getValueString('bbb', 'transcript_secret', '');
-		$authHeader = $this->request->getHeader('Authorization');
+		$authHeader = (string)$this->request->getHeader('Authorization');
 
-		if (empty($secret) || $authHeader !== 'Bearer ' . $secret) {
-			return new DataResponse(['error' => 'Unauthorized'], Http::STATUS_UNAUTHORIZED);
+		if ($secret === '' || !hash_equals('Bearer ' . $secret, $authHeader)) {
+			$response = new DataResponse(['error' => 'Unauthorized'], Http::STATUS_UNAUTHORIZED);
+			$response->throttle(['action' => 'bbbTranscriptReceive']);
+			return $response;
 		}
 
 		$status = $this->request->getParam('status', 'processing');
+		if (!is_string($status) || !in_array($status, [
+			Transcript::STATUS_PROCESSING,
+			Transcript::STATUS_COMPLETE,
+			Transcript::STATUS_PARTIAL,
+			Transcript::STATUS_FAILED,
+		], true)) {
+			return new DataResponse(['error' => 'invalid status'], Http::STATUS_BAD_REQUEST);
+		}
 		$transcriptVtt = $this->request->getParam('transcript_vtt', '');
 		$transcriptTxt = $this->request->getParam('transcript_txt', '');
 		$notesMd = $this->request->getParam('notes_md', '');
