@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { showError } from '@nextcloud/dialogs';
 import { api, Recording, TranscriptStatus } from '../Common/Api';
@@ -36,6 +36,14 @@ const RecordingRow = ({recording, isAdmin, transcriptStatus, deleteRecording, st
 	const [editingTitle, setEditingTitle] = useState(false);
 	const [titleDraft, setTitleDraft] = useState('');
 	const [persist, setPersist] = useState(recording.persist);
+
+	// Transcript statuses load AFTER the row mounts, so the title arrives late.
+	// Re-sync the displayed title when it does (unless the user is mid-edit).
+	useEffect(() => {
+		if (!editingTitle) {
+			setTitle(transcriptStatus?.title || '');
+		}
+	}, [transcriptStatus?.title]);
 
 	async function togglePersist(next: boolean) {
 		setPersist(next); // optimistic
