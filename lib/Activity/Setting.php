@@ -5,7 +5,7 @@ namespace OCA\BigBlueButton\Activity;
 use OCP\Activity\ISetting;
 
 class Setting implements ISetting {
-	public const Identifier = 'bbb';
+	public const Identifier = 'boss_meeting';
 
 	public function getIdentifier() {
 		return self::Identifier;

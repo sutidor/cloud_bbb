@@ -48,8 +48,8 @@ class API {
 
 	private function getServer(): BigBlueButton {
 		if (!$this->server) {
-			$apiUrl = $this->config->getValueString('bbb', 'api.url');
-			$secret = $this->config->getValueString('bbb', 'api.secret');
+			$apiUrl = $this->config->getValueString('boss_meeting', 'api.url');
+			$secret = $this->config->getValueString('boss_meeting', 'api.secret');
 
 			$this->server = new BigBlueButton($apiUrl, $secret);
 		}
@@ -86,7 +86,7 @@ class API {
 			$joinMeetingParams->addUserData('bbb_show_public_chat_on_login', false);
 		}
 
-		if ($this->config->getValueBool('bbb', 'join.theme')) {
+		if ($this->config->getValueBool('boss_meeting', 'join.theme')) {
 			$primaryColor = $this->defaults->getColorPrimary();
 			$textColor = $this->defaults->getTextColorPrimary();
 
@@ -142,7 +142,7 @@ class API {
 		$createMeetingParams->addMeta('bbb-origin', \method_exists($this->defaults, 'getProductName') ? $this->defaults->getProductName() : 'Nextcloud');
 		$createMeetingParams->addMeta('bbb-origin-server-name', $this->request->getServerHost());
 
-		$analyticsCallbackUrl = $this->config->getValueString('bbb', 'api.meta_analytics-callback-url');
+		$analyticsCallbackUrl = $this->config->getValueString('boss_meeting', 'api.meta_analytics-callback-url');
 		if (!empty($analyticsCallbackUrl)) {
 			// For more details: https://github.com/bigbluebutton/bigbluebutton/blob/develop/record-and-playback/core/scripts/post_events/post_events_analytics_callback.rb
 			$createMeetingParams->addMeta('analytics-callback-url', $analyticsCallbackUrl);
@@ -151,10 +151,10 @@ class API {
 
 		$mac = $this->crypto->calculateHMAC($room->uid);
 
-		$endMeetingUrl = $this->urlGenerator->linkToRouteAbsolute('bbb.hook.meetingEnded', ['token' => $room->uid, 'mac' => $mac]);
+		$endMeetingUrl = $this->urlGenerator->linkToRouteAbsolute('boss_meeting.hook.meetingEnded', ['token' => $room->uid, 'mac' => $mac]);
 		$createMeetingParams->setEndCallbackUrl($endMeetingUrl);
 
-		$recordingReadyUrl = $this->urlGenerator->linkToRouteAbsolute('bbb.hook.recordingReady', ['token' => $room->uid, 'mac' => $mac]);
+		$recordingReadyUrl = $this->urlGenerator->linkToRouteAbsolute('boss_meeting.hook.recordingReady', ['token' => $room->uid, 'mac' => $mac]);
 		$createMeetingParams->setRecordingReadyCallbackUrl($recordingReadyUrl);
 
 		$invitationUrl = $this->urlHelper->linkToInvitationAbsolute($room);

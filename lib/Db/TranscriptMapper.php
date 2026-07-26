@@ -55,4 +55,19 @@ class TranscriptMapper extends QBMapper {
 
 		return $result;
 	}
+
+	/**
+	 * Archived transcripts (BBB recording deleted, transcript kept), newest first.
+	 *
+	 * @return Transcript[]
+	 */
+	public function findArchived(): array {
+		$qb = $this->db->getQueryBuilder();
+		$qb->select('*')
+			->from($this->tableName)
+			->where($qb->expr()->eq('status', $qb->createNamedParameter(Transcript::STATUS_ARCHIVED)))
+			->orderBy('updated_at', 'DESC');
+
+		return $this->findEntities($qb);
+	}
 }

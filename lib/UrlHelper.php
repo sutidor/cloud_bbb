@@ -15,10 +15,10 @@ class UrlHelper {
 	}
 
 	public function linkToInvitationAbsolute(Room $room): string {
-		$url = $this->config->getValueString('bbb', 'app.shortener', '');
+		$url = $this->config->getValueString('boss_meeting', 'app.shortener', '');
 
 		if (empty($url) || strpos($url, 'https://') !== 0 || strpos($url, '{token}') === false) {
-			return $this->urlGenerator->linkToRouteAbsolute('bbb.join.index', ['token' => $room->getUid()]);
+			return $this->urlGenerator->linkToRouteAbsolute('boss_meeting.join.index', ['token' => $room->getUid()]);
 		}
 
 		$placeholders = [];

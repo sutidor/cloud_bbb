@@ -21,13 +21,13 @@ class TemplateProvider {
 	public function getManager(): TemplateResponse {
 		$warning = '';
 
-		if (empty($this->config->getValueString('bbb', 'api.url')) || empty($this->config->getValueString('bbb', 'api.secret'))) {
+		if (empty($this->config->getValueString('boss_meeting', 'api.url')) || empty($this->config->getValueString('boss_meeting', 'api.secret'))) {
 			$warning = $this->l->t('API URL or secret not configured. Please contact your administrator.');
 		}
 
-		return new TemplateResponse('bbb', 'manager', [
+		return new TemplateResponse('boss_meeting', 'manager', [
 			'warning' => $warning,
-			'shortener' => $this->config->getValueString('bbb', 'app.shortener', ''),
+			'shortener' => $this->config->getValueString('boss_meeting', 'app.shortener', ''),
 		]);
 	}
 }

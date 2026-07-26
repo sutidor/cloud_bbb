@@ -17,7 +17,7 @@ const App = (): JSX.Element => {
 		}).catch((err) => {
 			console.warn('Could not load restrictions', err);
 
-			setError(t('bbb', 'Server error'));
+			setError(t('boss_meeting', 'Server error'));
 		}).then(() => {
 			setRestrictionsLoaded(true);
 		});
@@ -53,19 +53,19 @@ const App = (): JSX.Element => {
 				<thead>
 					<tr>
 						<th>
-							{t('bbb', 'Group name')}
+							{t('boss_meeting', 'Group name')}
 						</th>
 						<th>
-							{t('bbb', 'Max. rooms')}
+							{t('boss_meeting', 'Max. rooms')}
 						</th>
 						<th>
-							{t('bbb', 'Access options')}
+							{t('boss_meeting', 'Access options')}
 						</th>
 						<th>
-							{t('bbb', 'Max. participants')}
+							{t('boss_meeting', 'Max. participants')}
 						</th>
 						<th>
-							{t('bbb', 'Recording')}
+							{t('boss_meeting', 'Recording')}
 						</th>
 						<th/>
 					</tr>
@@ -79,7 +79,7 @@ const App = (): JSX.Element => {
 							{!areRestrictionsLoaded
 								? <span className="icon icon-loading-small icon-visible"></span>
 								: <ShareSelection
-									placeholder={t('bbb', 'Group …')}
+									placeholder={t('boss_meeting', 'Group …')}
 									selectShare={(share) => addRestriction(share.value.shareWith)}
 									shareType={[ShareType.Group]}
 									excluded={{groupIds: restrictions.map((restriction: Restriction) => restriction.groupId)}} /> }
@@ -90,7 +90,7 @@ const App = (): JSX.Element => {
 				</tfoot>
 			</table>
 
-			<p className="text-muted">{t('bbb', 'Restrictions do not affect existing rooms. Minus one means the value is unlimited. The least restrictive option is chosen for every user if multiple restrictions apply.')}</p>
+			<p className="text-muted">{t('boss_meeting', 'Restrictions do not affect existing rooms. Minus one means the value is unlimited. The least restrictive option is chosen for every user if multiple restrictions apply.')}</p>
 		</div>
 	);
 };

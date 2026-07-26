@@ -20,13 +20,13 @@ const TranscriptPanel = ({ recordingId }: Props): JSX.Element => {
 		try {
 			const sent = await api.sendTranscriptEmail(recordingId);
 			if (sent > 0) {
-				showSuccess(n('bbb', 'Minutes sent to %n participant', 'Minutes sent to %n participants', sent));
+				showSuccess(n('boss_meeting', 'Minutes sent to %n participant', 'Minutes sent to %n participants', sent));
 			} else {
-				showError(t('bbb', 'No participants with a Nextcloud account to email'));
+				showError(t('boss_meeting', 'No participants with a Nextcloud account to email'));
 			}
 		} catch (err) {
 			console.warn('Could not send minutes', err);
-			showError(t('bbb', 'Could not send minutes'));
+			showError(t('boss_meeting', 'Could not send minutes'));
 		} finally {
 			setSending(false);
 		}
@@ -45,7 +45,7 @@ const TranscriptPanel = ({ recordingId }: Props): JSX.Element => {
 			setContent(result);
 		} catch (err) {
 			console.warn('Could not load content', err);
-			setError(t('bbb', 'Could not load transcript'));
+			setError(t('boss_meeting', 'Could not load transcript'));
 			setContent(null);
 		} finally {
 			setLoading(false);
@@ -75,7 +75,7 @@ const TranscriptPanel = ({ recordingId }: Props): JSX.Element => {
 		return (
 			<div className="bbb-transcript-panel">
 				<span className="icon icon-loading-small icon-visible"></span>
-				{t('bbb', 'Loading transcript...')}
+				{t('boss_meeting', 'Loading transcript...')}
 			</div>
 		);
 	}
@@ -83,7 +83,7 @@ const TranscriptPanel = ({ recordingId }: Props): JSX.Element => {
 	if (error || !content) {
 		return (
 			<div className="bbb-transcript-panel bbb-transcript-error">
-				{error || t('bbb', 'No transcript available.')}
+				{error || t('boss_meeting', 'No transcript available.')}
 			</div>
 		);
 	}
@@ -94,12 +94,12 @@ const TranscriptPanel = ({ recordingId }: Props): JSX.Element => {
 				<button
 					className={`bbb-transcript-tab ${tab === 'notes' ? 'active' : ''}`}
 					onClick={() => setTab('notes')}>
-					{t('bbb', 'Meeting Notes')}
+					{t('boss_meeting', 'Meeting Notes')}
 				</button>
 				<button
 					className={`bbb-transcript-tab ${tab === 'transcript' ? 'active' : ''}`}
 					onClick={() => setTab('transcript')}>
-					{t('bbb', 'Transcript')}
+					{t('boss_meeting', 'Transcript')}
 				</button>
 				<span className="bbb-transcript-meta">
 					{content.language?.toUpperCase()}
@@ -110,7 +110,7 @@ const TranscriptPanel = ({ recordingId }: Props): JSX.Element => {
 				{tab === 'notes'
 					? (content.content
 						? renderMarkdown(content.content)
-						: <p>{t('bbb', 'No meeting notes available.')}</p>)
+						: <p>{t('boss_meeting', 'No meeting notes available.')}</p>)
 					: <pre className="bbb-transcript-pre">{content.content}</pre>
 				}
 			</div>
@@ -118,19 +118,19 @@ const TranscriptPanel = ({ recordingId }: Props): JSX.Element => {
 			<div className="bbb-transcript-downloads">
 				<a className="button" href={api.getTranscriptDownloadUrl(recordingId, 'notes_md')}>
 					<span className="icon icon-download icon-visible"></span>
-					{t('bbb', 'Notes (.md)')}
+					{t('boss_meeting', 'Notes (.md)')}
 				</a>
 				<a className="button" href={api.getTranscriptDownloadUrl(recordingId, 'transcript_txt')}>
 					<span className="icon icon-download icon-visible"></span>
-					{t('bbb', 'Transcript (.txt)')}
+					{t('boss_meeting', 'Transcript (.txt)')}
 				</a>
 				<a className="button" href={api.getTranscriptDownloadUrl(recordingId, 'transcript_vtt')}>
 					<span className="icon icon-download icon-visible"></span>
-					{t('bbb', 'Subtitles (.vtt)')}
+					{t('boss_meeting', 'Subtitles (.vtt)')}
 				</a>
 				<button className="button primary bbb-send-minutes" onClick={sendToParticipants} disabled={sending}>
 					<span className={'icon icon-visible ' + (sending ? 'icon-loading-small' : 'icon-mail')}></span>
-					{t('bbb', 'Send to participants')}
+					{t('boss_meeting', 'Send to participants')}
 				</button>
 			</div>
 		</div>

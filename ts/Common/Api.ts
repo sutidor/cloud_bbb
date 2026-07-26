@@ -80,7 +80,7 @@ export type Participant = {
 }
 
 export type TranscriptStatus = {
-	status: 'processing' | 'complete' | 'partial' | 'failed';
+	status: 'processing' | 'complete' | 'partial' | 'failed' | 'archived' | 'none';
 	language: string;
 	title: string;
 	participants: Participant[];
@@ -127,7 +127,7 @@ export interface ShareWith {
 
 class Api {
 	public getUrl(endpoint: string): string {
-		return OC.generateUrl(`apps/bbb/${endpoint}`);
+		return OC.generateUrl(`apps/boss_meeting/${endpoint}`);
 	}
 
 	public async getRestriction(): Promise<Restriction> {

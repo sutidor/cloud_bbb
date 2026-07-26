@@ -82,8 +82,8 @@ class Provider implements IProvider {
 				'',
 				$room->getName(),
 				$this->getAccess($room->getAccess()),
-				$this->urlGenerator->linkToRouteAbsolute('bbb.page.index'),
-				$this->urlGenerator->imagePath('bbb', 'app-grey.svg')
+				$this->urlGenerator->linkToRouteAbsolute('boss_meeting.page.index'),
+				$this->urlGenerator->imagePath('boss_meeting', 'app-grey.svg')
 			);
 		}
 

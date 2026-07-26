@@ -14,7 +14,7 @@ const EditRoom = ({ room, restriction, updateProperty }: Props): JSX.Element => 
 	return (
 		<>
 			<button onClick={ev => { ev.preventDefault(), setOpen(true); }}
-				title={t('bbb', 'Edit')} className="action-item">
+				title={t('boss_meeting', 'Edit')} className="action-item">
 				<span className="icon icon-settings-dark icon-visible"></span>
 			</button>
 

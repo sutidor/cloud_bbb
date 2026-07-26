@@ -96,7 +96,7 @@ class RoomService {
 	public function create(string $name, string $welcome, int $maxParticipants, bool $record, string $access, string $userId): \OCP\AppFramework\Db\Entity {
 		$room = new Room();
 
-		$mediaCheck = $this->config->getValueBool('bbb', 'join.mediaCheck', true);
+		$mediaCheck = $this->config->getValueBool('boss_meeting', 'join.mediaCheck', true);
 
 		$room->setUid($this->humanReadableRandom(16));
 		$room->setName($name);

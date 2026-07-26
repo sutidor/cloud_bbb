@@ -1,5 +1,5 @@
 OC.L10N.register(
-    "bbb",
+    "boss_meeting",
     {
     "Loading…" : "Laai…",
     "Back to %s" : "Terug na %s",

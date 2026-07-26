@@ -28,7 +28,7 @@ use OCP\IURLGenerator;
 use OCP\Util;
 
 class Application extends App implements IBootstrap {
-	public const ID = 'bbb';
+	public const ID = 'boss_meeting';
 	public const ORDER = 80;
 
 	public function __construct(array $urlParams = []) {
@@ -66,7 +66,7 @@ class Application extends App implements IBootstrap {
 	public function boot(IBootContext $context): void {
 		$context->injectFn([$this, 'registerAdminPage']);
 
-		Util::addScript('bbb', 'bbb-filelist');
+		Util::addScript('boss_meeting', 'bbb-filelist');
 	}
 
 	public function registerAdminPage(ISettingsManager $settingsManager, INavigationManager $navigationManager, IURLGenerator $urlGenerator, IAppConfig $config):void {
@@ -88,8 +88,8 @@ class Application extends App implements IBootstrap {
 			return [
 				'id' => self::ID,
 				'order' => 80,
-				'href' => $urlGenerator->linkToRoute('bbb.page.index'),
-				'icon' => $urlGenerator->imagePath('bbb', 'app.svg'),
+				'href' => $urlGenerator->linkToRoute('boss_meeting.page.index'),
+				'icon' => $urlGenerator->imagePath('boss_meeting', 'app.svg'),
 				'name' => $name,
 			];
 		});

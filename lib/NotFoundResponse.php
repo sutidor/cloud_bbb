@@ -21,7 +21,7 @@ class NotFoundResponse extends Response {
 	}
 
 	public function render() {
-		$template = new Template('bbb', '404', 'guest');
+		$template = new Template('boss_meeting', '404', 'guest');
 		return $template->fetchPage();
 	}
 }

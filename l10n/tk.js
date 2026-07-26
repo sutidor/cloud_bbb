@@ -1,5 +1,5 @@
 OC.L10N.register(
-    "bbb",
+    "boss_meeting",
     {
     "Loading…" : "Ýüklenýär…",
     "Close" : "Ýap",

@@ -1,5 +1,5 @@
 OC.L10N.register(
-    "bbb",
+    "boss_meeting",
     {
     "You created the room %s." : "您已建立聊天室 %s。",
     "You deleted the room %s." : "您已刪除聊天室 %s。",

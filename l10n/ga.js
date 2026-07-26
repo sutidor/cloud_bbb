@@ -1,5 +1,5 @@
 OC.L10N.register(
-    "bbb",
+    "boss_meeting",
     {
     "You created the room %s." : "Chruthaigh tú an seomra %s.",
     "You deleted the room %s." : "Scrios tú an seomra %s.",

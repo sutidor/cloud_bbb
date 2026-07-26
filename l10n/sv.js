@@ -1,5 +1,5 @@
 OC.L10N.register(
-    "bbb",
+    "boss_meeting",
     {
     "You shared the room %s with {shareWith}." : "Du delade rummet %s med {shareWith}.",
     "{user} shared the room %s with you." : "{user} delade rummet %s med dig.",

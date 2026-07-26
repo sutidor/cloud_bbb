@@ -1,5 +1,5 @@
 OC.L10N.register(
-    "bbb",
+    "boss_meeting",
     {
     "You unshared the room %s with {shareWith}." : "Вы скасавалі абагульванне пакоя %s з {shareWith}.",
     "{user} unshared the room %s with you." : "{user} скасаваў(-ла) абагульванне пакоя %s з вамі.",

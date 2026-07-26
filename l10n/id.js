@@ -1,5 +1,5 @@
 OC.L10N.register(
-    "bbb",
+    "boss_meeting",
     {
     "Public" : "Publik",
     "API URL or secret not configured. Please contact your administrator." : "Rahasia atau URL API belum dikonfigurasikan. Silakan hubungi administrator Anda.",

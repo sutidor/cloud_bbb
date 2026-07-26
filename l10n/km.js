@@ -1,5 +1,5 @@
 OC.L10N.register(
-    "bbb",
+    "boss_meeting",
     {
     "Close" : "បិទ",
     "Save" : "រក្សាទុក",

@@ -36,6 +36,10 @@ class Transcript extends Entity implements JsonSerializable {
 	public const STATUS_COMPLETE = 'complete';
 	public const STATUS_PARTIAL = 'partial';
 	public const STATUS_FAILED = 'failed';
+	// Kept after the BBB recording (video) was deleted by retention "archive" mode
+	public const STATUS_ARCHIVED = 'archived';
+	// Row exists only to hold a user-set title (recording never transcribed)
+	public const STATUS_NONE = 'none';
 
 	public $recordingId;
 	public $transcriptVtt;

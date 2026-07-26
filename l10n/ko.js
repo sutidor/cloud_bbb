@@ -1,5 +1,5 @@
 OC.L10N.register(
-    "bbb",
+    "boss_meeting",
     {
     "You created the room %s." : "대화방 %s을(를) 생성했습니다",
     "You deleted the room %s." : "대화방 %s을(를) 삭제했습니다",

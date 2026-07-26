@@ -21,15 +21,19 @@ class Admin implements ISettings {
 	 */
 	public function getForm() {
 		$parameters = [
-			'api.url' => $this->config->getValueString('bbb', 'api.url'),
-			'api.secret' => $this->config->getValueString('bbb', 'api.secret'),
-			'app.navigation' => $this->config->getValueBool('bbb', 'app.navigation') ? 'checked' : '',
-			'join.theme' => $this->config->getValueBool('bbb', 'join.theme') ? 'checked' : '',
-			'app.shortener' => $this->config->getValueString('bbb', 'app.shortener'),
-			'join.mediaCheck' => $this->config->getValueBool('bbb', 'join.mediaCheck', true) ? 'checked' : '',
+			'api.url' => $this->config->getValueString('boss_meeting', 'api.url'),
+			'api.secret' => $this->config->getValueString('boss_meeting', 'api.secret'),
+			'app.navigation' => $this->config->getValueBool('boss_meeting', 'app.navigation') ? 'checked' : '',
+			'join.theme' => $this->config->getValueBool('boss_meeting', 'join.theme') ? 'checked' : '',
+			'app.shortener' => $this->config->getValueString('boss_meeting', 'app.shortener'),
+			'join.mediaCheck' => $this->config->getValueBool('boss_meeting', 'join.mediaCheck', true) ? 'checked' : '',
+			'retention.enabled' => $this->config->getValueBool('boss_meeting', 'retention.enabled', false) ? 'checked' : '',
+			'retention.days' => $this->config->getValueInt('boss_meeting', 'retention.days', 180),
+			'retention.mode' => $this->config->getValueString('boss_meeting', 'retention.mode', 'archive'),
+			'retention.dryRun' => $this->config->getValueBool('boss_meeting', 'retention.dryRun', true) ? 'checked' : '',
 		];
 
-		return new TemplateResponse('bbb', 'admin', $parameters);
+		return new TemplateResponse('boss_meeting', 'admin', $parameters);
 	}
 
 	/**

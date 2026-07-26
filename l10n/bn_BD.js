@@ -1,5 +1,5 @@
 OC.L10N.register(
-    "bbb",
+    "boss_meeting",
     {
     "Close" : "বন্ধ",
     "Save" : "সংরক্ষণ",

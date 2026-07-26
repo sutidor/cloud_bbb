@@ -1,5 +1,5 @@
 OC.L10N.register(
-    "bbb",
+    "boss_meeting",
     {
     "You created the room %s." : "%s odasını eklediniz.",
     "You deleted the room %s." : "%s odasını sildiniz.",

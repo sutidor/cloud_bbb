@@ -34,8 +34,8 @@ $(() => {
 		await checkServer(url, secret);
 		await checkPasswordConfirmation();
 
-		OCP.AppConfig.setValue('bbb', 'api.url', url);
-		OCP.AppConfig.setValue('bbb', 'api.secret', secret);
+		OCP.AppConfig.setValue('boss_meeting', 'api.url', url);
+		OCP.AppConfig.setValue('boss_meeting', 'api.secret', secret);
 	}
 
 	$('#bbb-api').on('submit', function (ev) {
@@ -51,7 +51,7 @@ $(() => {
 		}
 
 		saveApiSettings(apiUrl.value, apiSecret.value).then(() => {
-			const successElement = generateSuccessElement(t('bbb', 'Settings saved'));
+			const successElement = generateSuccessElement(t('boss_meeting', 'Settings saved'));
 
 			setTimeout(() => {
 				resultElement.empty();
@@ -59,12 +59,12 @@ $(() => {
 
 			resultElement.append(successElement);
 		}).catch(err => {
-			let message = t('bbb', 'Unexpected error occurred');
+			let message = t('boss_meeting', 'Unexpected error occurred');
 
 			if (err === 'invalid-url') {
-				message = t('bbb', 'API URL is invalid');
+				message = t('boss_meeting', 'API URL is invalid');
 			} else if (err === 'invalid-secret') {
-				message = t('bbb', 'API secret is invalid');
+				message = t('boss_meeting', 'API secret is invalid');
 			}
 
 			const warningElement = generateWarningElement(message);
@@ -88,7 +88,7 @@ $(() => {
 			throw 'token';
 		}
 
-		OCP.AppConfig.setValue('bbb', 'app.shortener', shortener);
+		OCP.AppConfig.setValue('boss_meeting', 'app.shortener', shortener);
 	}
 
 	$('#bbb-shortener').on('submit', function (ev) {
@@ -101,7 +101,7 @@ $(() => {
 			return;
 		}
 		saveAppSettings(shortenerInput.value).then(() => {
-			const successElement = generateSuccessElement(t('bbb', 'Settings saved'));
+			const successElement = generateSuccessElement(t('boss_meeting', 'Settings saved'));
 
 			setTimeout(() => {
 				resultElement.empty();
@@ -109,12 +109,12 @@ $(() => {
 
 			resultElement.append(successElement);
 		}).catch(err => {
-			let message = t('bbb', 'Unexpected error occurred');
+			let message = t('boss_meeting', 'Unexpected error occurred');
 
 			if (err === 'https') {
-				message = t('bbb', 'URL has to start with HTTPS');
+				message = t('boss_meeting', 'URL has to start with HTTPS');
 			} else if (err === 'token') {
-				message = t('bbb', 'URL has to contain the {token} placeholder');
+				message = t('boss_meeting', 'URL has to contain the {token} placeholder');
 			}
 
 			const warningElement = generateWarningElement(message);
@@ -131,18 +131,18 @@ $(() => {
 		const {value} = ev.target as HTMLInputElement;
 
 		if (!value || value.indexOf('https://') !== 0 || value.indexOf('{token}') < 0) {
-			$('#bbb-shortener-example').text(t('bbb', 'URL has to start with https:// and contain {token}. Additionally the {user} placeholder can be used.'));
+			$('#bbb-shortener-example').text(t('boss_meeting', 'URL has to start with https:// and contain {token}. Additionally the {user} placeholder can be used.'));
 
 			return;
 		}
 
-		const target =  window.location.origin + OC.generateUrl('apps/bbb/b/$1');
+		const target =  window.location.origin + OC.generateUrl('apps/boss_meeting/b/$1');
 		const url = (new URL(value));
 		const rewritePath = '^' + url.pathname.replace(/^\//, '').replace(/%7Buser%7D/g, '.+').replace(/%7Btoken%7D/g, '(.+)');
 
 		$('#bbb-shortener-example').html(`<p>${generateExampleShortener(value)}</p>
 		<details>
-		<summary>${t('bbb', 'Example configuration for Apache and Nginx')}</summary>
+		<summary>${t('boss_meeting', 'Example configuration for Apache and Nginx')}</summary>
 		<pre>#Apache with mod_rewrite
 ServerName    ${url.hostname}
 RewriteEngine on
@@ -163,6 +163,18 @@ return 307;</pre></details>
 
 		console.log(`checkbox ${inputElement.name} changed to ${inputElement.checked}`);
 
-		OCP.AppConfig.setValue('bbb', inputElement.name, inputElement.checked);
+		OCP.AppConfig.setValue('boss_meeting', inputElement.name, inputElement.checked);
+	});
+
+	// number / select settings (e.g. retention days, mode) save on change
+	$<HTMLInputElement>('.bbb-setting-value').on('change', (ev) => {
+		const el = ev.target as HTMLInputElement;
+		OCP.AppConfig.setValue('boss_meeting', el.name, el.value);
+	});
+
+	// reveal the retention submenu only when auto-deletion is enabled
+	$('#bbb-retention-enabled').on('change', (ev) => {
+		const on = (ev.target as HTMLInputElement).checked;
+		$('#bbb-retention-options')[on ? 'show' : 'hide']();
 	});
 });

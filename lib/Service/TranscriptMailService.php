@@ -42,7 +42,7 @@ class TranscriptMailService {
 		}
 
 		$heading = $this->buildHeading($transcript);
-		$link = $this->urlGenerator->linkToRouteAbsolute('bbb.page.index');
+		$link = $this->urlGenerator->linkToRouteAbsolute('boss_meeting.page.index');
 		if ($roomUid !== null && $roomUid !== '') {
 			// deep-link: the app expands + scrolls to this room on load
 			$link .= '#room-' . rawurlencode($roomUid);
@@ -57,7 +57,7 @@ class TranscriptMailService {
 				$message->setSubject($heading);
 				$message->setTo([$email => $name]);
 
-				$template = $this->mailer->createEMailTemplate('bbb.TranscriptMinutes', [
+				$template = $this->mailer->createEMailTemplate('boss_meeting.TranscriptMinutes', [
 					'title' => $heading,
 				]);
 				$template->setSubject($heading);

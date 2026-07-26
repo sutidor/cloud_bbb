@@ -116,7 +116,7 @@ const ShareWith = ({ room, permission, shares: allShares, setShares }: Props): J
 							{(share.id > ROOM_OWNER_ID && isOwner) && <div className="bbb-shareWith__item__action">
 								<button className="action-item"
 									onClick={ev => {ev.preventDefault(); deleteRoomShare(share.id);}}
-									title={t('bbb', 'Delete')}>
+									title={t('boss_meeting', 'Delete')}>
 									<span className="icon icon-delete icon-visible"></span>
 								</button>
 							</div>}
@@ -127,7 +127,7 @@ const ShareWith = ({ room, permission, shares: allShares, setShares }: Props): J
 		);
 	}
 
-	const loading = <><span className="icon icon-loading-small icon-visible"></span> {t('bbb', 'Loading')}</>;
+	const loading = <><span className="icon icon-loading-small icon-visible"></span> {t('boss_meeting', 'Loading')}</>;
 
 	return (
 		<>
@@ -137,7 +137,7 @@ const ShareWith = ({ room, permission, shares: allShares, setShares }: Props): J
 					excluded={{userIds: sharedUserIds, groupIds: sharedGroupIds, circleIds: sharedCircleIds}}
 					shareType={[ShareType.User, ShareType.Group, ShareType.Circle]}/> :
 				<em>
-					<span className="icon icon-details icon-visible"></span> {t('bbb', 'You are not allowed to change this option, because this room is shared with you.')}
+					<span className="icon icon-details icon-visible"></span> {t('boss_meeting', 'You are not allowed to change this option, because this room is shared with you.')}
 				</em>
 			}
 

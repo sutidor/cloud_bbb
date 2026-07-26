@@ -25,8 +25,8 @@ const RestrictionRoom = (props: Props): JSX.Element => {
 		ev.preventDefault();
 		const groupName = restriction.groupName || restriction.groupId;
 		OC.dialogs.confirm(
-			t('bbb', 'Are you sure you want to delete the restrictions for group "{name}"? This operation cannot be undone.', { name: groupName }),
-			t('bbb', 'Delete restrictions for "{name}"?', { name: groupName}),
+			t('boss_meeting', 'Are you sure you want to delete the restrictions for group "{name}"? This operation cannot be undone.', { name: groupName }),
+			t('boss_meeting', 'Delete restrictions for "{name}"?', { name: groupName}),
 			confirmed => {
 				if (confirmed) {
 					props.deleteRestriction(restriction.id);
@@ -42,7 +42,7 @@ const RestrictionRoom = (props: Props): JSX.Element => {
 
 	return (
 		<tr>
-			<td className="name">{restriction.groupName || restriction.groupId || t('bbb', 'All users')}</td>
+			<td className="name">{restriction.groupName || restriction.groupId || t('boss_meeting', 'All users')}</td>
 			<td className="max-rooms bbb-shrink">
 				{edit('maxRooms', 'number')}
 			</td>
@@ -54,7 +54,7 @@ const RestrictionRoom = (props: Props): JSX.Element => {
 					options={AccessOptions}
 					setValue={updateRestriction}
 					invert={true}
-					placeholder={t('bbb', 'All')} />
+					placeholder={t('boss_meeting', 'All')} />
 			</td>
 
 			<td className="max-participants bbb-shrink">
@@ -72,7 +72,7 @@ const RestrictionRoom = (props: Props): JSX.Element => {
 			</td>
 
 			<td className="remove icon-col">
-				<button disabled={!restriction.groupId} className="action-item" onClick={deleteRow as any} title={t('bbb', 'Delete')}>
+				<button disabled={!restriction.groupId} className="action-item" onClick={deleteRow as any} title={t('boss_meeting', 'Delete')}>
 					<span className="icon icon-delete icon-visible"></span>
 				</button>
 			</td>

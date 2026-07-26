@@ -157,7 +157,7 @@ class JoinController extends Controller {
 	private function getLoginUrl(): string {
 		return $this->urlGenerator->linkToRoute('core.login.showLoginForm', [
 			'redirect_url' => $this->urlGenerator->linkToRoute(
-				'bbb.join.index',
+				'boss_meeting.join.index',
 				['token' => $this->token]
 			),
 		]);

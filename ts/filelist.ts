@@ -43,7 +43,7 @@ async function createDirectShare(fileId: number): Promise<string> {
 }
 
 async function createRoomWithFile(shareUrl: string, filename: string, roomUid: string) {
-	const joinUrl = generateUrl('/apps/bbb/b/{uid}?u={url}&filename={filename}', {
+	const joinUrl = generateUrl('/apps/boss_meeting/b/{uid}?u={url}&filename={filename}', {
 		uid: roomUid,
 		url: shareUrl,
 		filename,
@@ -65,12 +65,12 @@ export async function sendFileToBBB(fileId: number, filename: string, roomUid: s
 			const success = await insertDocumentToRoom(shareUrl, filename, roomUid);
 
 			if (success) {
-				showSuccess(t('bbb', 'The file "{filename}" was uploaded to your room.', { filename }));
+				showSuccess(t('boss_meeting', 'The file "{filename}" was uploaded to your room.', { filename }));
 			} else {
-				showWarning(t('bbb', 'The file "{filename}" could not be uploaded to your room.', { filename }));
+				showWarning(t('boss_meeting', 'The file "{filename}" could not be uploaded to your room.', { filename }));
 			}
 		} catch {
-			showError(t('bbb', 'The file "{filename}" could not be uploaded to your room. Maybe your BigBlueButton server does not support this action.', { filename }));
+			showError(t('boss_meeting', 'The file "{filename}" could not be uploaded to your room. Maybe your BigBlueButton server does not support this action.', { filename }));
 		}
 	} else {
 		createRoomWithFile(shareUrl, filename, roomUid);
@@ -112,7 +112,7 @@ export function showSendFileDialog(fileId: number, filename: string	) {
 registerFileAction( new FileAction({
 	id: 'bbb-send-file',
 	displayName: () => {
-		return t('bbb', 'Send to BBB');
+		return t('boss_meeting', 'Send to BBB');
 	},
 	enabled: (nodes) => {
 		// only files with the mime type allowed

@@ -211,7 +211,7 @@ class TranscriptController extends Controller {
 	#[BruteForceProtection(action: 'bbbTranscriptReceive')]
 	public function receive(string $recordingId): DataResponse {
 		// Verify shared secret (constant-time comparison)
-		$secret = $this->appConfig->getValueString('bbb', 'transcript_secret', '');
+		$secret = $this->appConfig->getValueString('boss_meeting', 'transcript_secret', '');
 		$authHeader = (string)$this->request->getHeader('Authorization');
 
 		if ($secret === '' || !hash_equals('Bearer ' . $secret, $authHeader)) {
@@ -309,16 +309,25 @@ class TranscriptController extends Controller {
 			return new DataResponse(['error' => 'invalid title'], Http::STATUS_BAD_REQUEST);
 		}
 
+		$now = time();
 		try {
 			$transcript = $this->mapper->findByRecordingId($recordingId);
+			$transcript->setTitle($title);
+			$transcript->setTitleLocked(true);
+			$transcript->setUpdatedAt($now);
+			$this->mapper->update($transcript);
 		} catch (DoesNotExistException $e) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
+			// Allow titling a recording that was never transcribed: create a
+			// title-only row (status=none) that a later transcription can fill in.
+			$transcript = new Transcript();
+			$transcript->setRecordingId($recordingId);
+			$transcript->setTitle($title);
+			$transcript->setTitleLocked(true);
+			$transcript->setStatus(Transcript::STATUS_NONE);
+			$transcript->setCreatedAt($now);
+			$transcript->setUpdatedAt($now);
+			$this->mapper->insert($transcript);
 		}
-
-		$transcript->setTitle($title);
-		$transcript->setTitleLocked(true);
-		$transcript->setUpdatedAt(time());
-		$this->mapper->update($transcript);
 
 		return new DataResponse(['title' => $title]);
 	}

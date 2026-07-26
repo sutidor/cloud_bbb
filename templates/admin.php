@@ -2,8 +2,8 @@
 /** @var $l \OCP\IL10N */
 /** @var $_ array */
 
-\OCP\Util::addScript('bbb', 'bbb-admin', 'admin');
-\OCP\Util::addScript('bbb', 'bbb-restrictions');
+\OCP\Util::addScript('boss_meeting', 'bbb-admin', 'admin');
+\OCP\Util::addScript('boss_meeting', 'bbb-restrictions');
 ?>
 
 <div id="bbb-settings" class="section">
@@ -36,6 +36,35 @@
             <input type="checkbox" name="join.mediaCheck" id="bbb-join-mediaCheck" class="checkbox bbb-setting" value="1" <?php p($_['join.mediaCheck']); ?> />
             <label for="bbb-join-mediaCheck"><?php p($l->t('Perform media check before usage')); ?></label>
         </p>
+
+        <h3><?php p($l->t('Recording retention')); ?></h3>
+        <p><?php p($l->t('Automatically delete old recordings. Recordings a user marks "Keep" are never deleted.')); ?></p>
+
+        <p>
+            <input type="checkbox" name="retention.enabled" id="bbb-retention-enabled" class="checkbox bbb-setting" value="1" <?php p($_['retention.enabled']); ?> />
+            <label for="bbb-retention-enabled"><?php p($l->t('Automatically delete old recordings')); ?></label>
+        </p>
+
+        <div id="bbb-retention-options" <?php if ($_['retention.enabled'] !== 'checked') {
+        	p('style="display:none"');
+        } ?>>
+            <p>
+                <label for="bbb-retention-days"><?php p($l->t('Delete recordings older than')); ?></label>
+                <input type="number" name="retention.days" id="bbb-retention-days" class="bbb-setting-value" value="<?php p($_['retention.days']); ?>" min="1" step="1" style="width:6em" />
+                <?php p($l->t('days')); ?>
+            </p>
+            <p>
+                <label for="bbb-retention-mode"><?php p($l->t('When deleting')); ?></label>
+                <select name="retention.mode" id="bbb-retention-mode" class="bbb-setting-value">
+                    <option value="archive" <?php p($_['retention.mode'] === 'archive' ? 'selected' : ''); ?>><?php p($l->t('Delete video, keep transcript & notes')); ?></option>
+                    <option value="full" <?php p($_['retention.mode'] === 'full' ? 'selected' : ''); ?>><?php p($l->t('Delete everything')); ?></option>
+                </select>
+            </p>
+            <p>
+                <input type="checkbox" name="retention.dryRun" id="bbb-retention-dryRun" class="checkbox bbb-setting" value="1" <?php p($_['retention.dryRun']); ?> />
+                <label for="bbb-retention-dryRun"><?php p($l->t('Dry run (only log what would be deleted, delete nothing)')); ?></label>
+            </p>
+        </div>
 
         <h3><?php p($l->t('Community')); ?></h3>
         <p><?php p($l->t('Are you enjoying this app? Give something back to the open source community.')); ?> <a href="https://github.com/sualko/cloud_bbb/blob/master/.github/contributing.md" target="_blank" rel="noopener noreferrer" class="button"><span class="heart"></span> <?php p($l->t('Checkout the contributor guide')); ?></a></p>

@@ -52,7 +52,7 @@ const RecordingRow = ({recording, isAdmin, transcriptStatus, deleteRecording, st
 		} catch (err) {
 			console.warn('Could not change persist flag', err);
 			setPersist(!next); // roll back
-			showError(t('bbb', 'Could not change the keep setting'));
+			showError(t('boss_meeting', 'Could not change the keep setting'));
 		}
 	}
 
@@ -66,7 +66,7 @@ const RecordingRow = ({recording, isAdmin, transcriptStatus, deleteRecording, st
 					className="checkbox"
 					checked={recording.state === 'published'}
 					onChange={(event) =>  onChange(event.target.checked)} />
-				<label htmlFor={'bbb-record-state-' + recording.id}>{t('bbb', 'Published')}</label>
+				<label htmlFor={'bbb-record-state-' + recording.id}>{t('boss_meeting', 'Published')}</label>
 			</div>
 		);
 	}
@@ -82,15 +82,12 @@ const RecordingRow = ({recording, isAdmin, transcriptStatus, deleteRecording, st
 			setTitle(saved);
 		} catch (err) {
 			console.warn('Could not save title', err);
-			showError(t('bbb', 'Could not save title'));
+			showError(t('boss_meeting', 'Could not save title'));
 		}
 	}
 
 	function titleCell(): JSX.Element {
-		// Only meetings with a transcript can carry a title
-		if (!transcriptStatus) {
-			return <span className="bbb-recording-title bbb-recording-title--muted">{recording.name}</span>;
-		}
+		// Any recording can carry a user-set title, even one never transcribed.
 		if (editingTitle) {
 			return (
 				<form className="bbb-title-edit" onSubmit={(e) => { e.preventDefault(); saveTitle(); }}>
@@ -98,14 +95,16 @@ const RecordingRow = ({recording, isAdmin, transcriptStatus, deleteRecording, st
 						value={titleDraft}
 						onChange={(e) => setTitleDraft(e.target.value)}
 						onBlur={saveTitle}
-						aria-label={t('bbb', 'Meeting title')} />
+						aria-label={t('boss_meeting', 'Meeting title')} />
 				</form>
 			);
 		}
+		const label = title || recording.name;
 		return (
-			<button className="bbb-recording-title" title={t('bbb', 'Click to rename')}
-				onClick={() => { setTitleDraft(title); setEditingTitle(true); }}>
-				{title || <span className="bbb-recording-title--muted">{t('bbb', 'Untitled meeting')}</span>}
+			<button className={'bbb-recording-title' + (title ? '' : ' bbb-recording-title--muted')}
+				title={t('boss_meeting', 'Click to rename')}
+				onClick={() => { setTitleDraft(title || recording.name); setEditingTitle(true); }}>
+				{label || t('boss_meeting', 'Untitled meeting')}
 			</button>
 		);
 	}
@@ -113,12 +112,12 @@ const RecordingRow = ({recording, isAdmin, transcriptStatus, deleteRecording, st
 	function participantsCell(): JSX.Element {
 		const count = recording.participants;
 		if (!participants.length) {
-			return <span>{n('bbb', '%n participant', '%n participants', count)}</span>;
+			return <span>{n('boss_meeting', '%n participant', '%n participants', count)}</span>;
 		}
 		return (
 			<div className="bbb-participants">
 				<span className="bbb-participants-count">
-					{n('bbb', '%n participant', '%n participants', count)}
+					{n('boss_meeting', '%n participant', '%n participants', count)}
 				</span>
 				<div className="bbb-participants-list" role="tooltip">
 					<ul>
@@ -144,22 +143,26 @@ const RecordingRow = ({recording, isAdmin, transcriptStatus, deleteRecording, st
 
 		if (status === 'processing') {
 			return (
-				<span className="icon icon-loading-small icon-visible" title={t('bbb', 'Transcribing...')}></span>
+				<span className="icon icon-loading-small icon-visible" title={t('boss_meeting', 'Transcribing...')}></span>
 			);
 		}
 
 		if (status === 'failed') {
 			return (
-				<span className="icon icon-error icon-visible" title={t('bbb', 'Transcription failed')}></span>
+				<span className="icon icon-error icon-visible" title={t('boss_meeting', 'Transcription failed')}></span>
 			);
 		}
 
-		// complete or partial
+		// notes button only when a transcript actually exists
+		if (status !== 'complete' && status !== 'partial' && status !== 'archived') {
+			return null;
+		}
+
 		return (
 			<button
 				className={'action-item bbb-notes-toggle' + (showTranscript ? ' active' : '')}
 				onClick={() => setShowTranscript(!showTranscript)}
-				title={t('bbb', 'Meeting notes')}>
+				title={t('boss_meeting', 'Meeting notes')}>
 				<NotesIcon />
 			</button>
 		);
@@ -169,19 +172,19 @@ const RecordingRow = ({recording, isAdmin, transcriptStatus, deleteRecording, st
 		<>
 			<tr key={recording.id}>
 				<td className="start icon-col">
-					<a href={recording.url} className="action-item" target="_blank" rel="noopener noreferrer" title={t('bbb', 'Open recording')}>
+					<a href={recording.url} className="action-item" target="_blank" rel="noopener noreferrer" title={t('boss_meeting', 'Open recording')}>
 						<span className="icon icon-external icon-visible"></span>
 					</a>
 				</td>
 				<td className="share icon-col">
 					<CopyToClipboard text={recording.url} options={{format:'text/plain'}}>
-						<button className="action-item copy-to-clipboard" title={t('bbb', 'Copy to clipboard')}>
+						<button className="action-item copy-to-clipboard" title={t('boss_meeting', 'Copy to clipboard')}>
 							<span className="icon icon-clippy icon-visible" ></span>
 						</button>
 					</CopyToClipboard>
 				</td>
 				<td className="icon-col">
-					<button className="action-item" onClick={() => storeRecording(recording)} title={t('bbb', 'Save as file')}>
+					<button className="action-item" onClick={() => storeRecording(recording)} title={t('boss_meeting', 'Save as file')}>
 						<span className="icon icon-add-shortcut icon-visible"></span>
 					</button>
 				</td>
@@ -217,15 +220,15 @@ const RecordingRow = ({recording, isAdmin, transcriptStatus, deleteRecording, st
 								checked={persist}
 								onChange={(event) => togglePersist(event.target.checked)} />
 							<label htmlFor={'bbb-record-keep-' + recording.id}
-								title={t('bbb', 'Keep this recording (exclude from auto-deletion)')}>
-								{t('bbb', 'Keep')}
+								title={t('boss_meeting', 'Keep this recording (exclude from auto-deletion)')}>
+								{t('boss_meeting', 'Keep')}
 							</label>
 						</div>
 					}
 				</td>
 				<td className="remove icon-col">
 					{isAdmin &&
-						<button className="action-item" onClick={() => deleteRecording(recording)} title={t('bbb', 'Delete')}>
+						<button className="action-item" onClick={() => deleteRecording(recording)} title={t('boss_meeting', 'Delete')}>
 							<span className="icon icon-delete icon-visible"></span>
 						</button>
 					}

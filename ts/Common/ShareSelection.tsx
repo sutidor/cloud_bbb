@@ -26,7 +26,7 @@ const ShareSelection = (props: Props): JSX.Element => {
 		groupIds: props.excluded?.groupIds || [],
 		circleIds: props.excluded?.circleIds || [],
 	};
-	const placeholder = props.placeholder || t('bbb', 'Name, group …');
+	const placeholder = props.placeholder || t('boss_meeting', 'Name, group …');
 
 	useEffect(() => {
 		setSearchResults(undefined);
@@ -78,16 +78,16 @@ const ShareSelection = (props: Props): JSX.Element => {
 					className="suggestion"
 					onMouseDown={preventOnBlurEvent}
 					onClick={() => selectShare(option)}>
-					{option.label}{option.value.shareType === ShareType.Group ? ' (' + t('bbb', 'Group') + ')' : ''}
+					{option.label}{option.value.shareType === ShareType.Group ? ' (' + t('boss_meeting', 'Group') + ')' : ''}
 				</li>);
 		};
 
 		return (
 			<ul className="bbb-selection">
 				{!options ?
-					<li><span className="icon icon-loading-small icon-visible"></span> {t('bbb', 'Searching')}</li> :
+					<li><span className="icon icon-loading-small icon-visible"></span> {t('boss_meeting', 'Searching')}</li> :
 					(
-						(results.length === 0 && search) ? <li>{t('bbb', 'No matches')}</li> : results.map(renderOption)
+						(results.length === 0 && search) ? <li>{t('boss_meeting', 'No matches')}</li> : results.map(renderOption)
 					)}
 			</ul>
 		);

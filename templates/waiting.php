@@ -2,7 +2,7 @@
 /** @var $_ array */
 /** @var $l \OCP\IL10N */
 style('core', 'guest');
-\OCP\Util::addScript('bbb', 'bbb-waiting');
+\OCP\Util::addScript('boss_meeting', 'bbb-waiting');
 ?>
 
 <div class="update bbb">

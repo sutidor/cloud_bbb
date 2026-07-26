@@ -3,18 +3,18 @@ import parse from 'html-react-parser';
 import DOMPurify from 'dompurify';
 
 export const AccessOptions = {
-	[Access.Public]: t('bbb', 'Public'),
-	[Access.Password]: t('bbb', 'Internal + Password protection for guests'),
-	[Access.WaitingRoom]: t('bbb', 'Internal + Waiting room for guests'),
-	[Access.WaitingRoomAll]: t('bbb', 'Waiting room for all users'),
-	[Access.Internal]: t('bbb', 'Internal'),
-	[Access.InternalRestricted]: t('bbb', 'Internal restricted'),
+	[Access.Public]: t('boss_meeting', 'Public'),
+	[Access.Password]: t('boss_meeting', 'Internal + Password protection for guests'),
+	[Access.WaitingRoom]: t('boss_meeting', 'Internal + Waiting room for guests'),
+	[Access.WaitingRoomAll]: t('boss_meeting', 'Waiting room for all users'),
+	[Access.Internal]: t('boss_meeting', 'Internal'),
+	[Access.InternalRestricted]: t('boss_meeting', 'Internal restricted'),
 };
 
 export const PermissionsOptions = {
-	[Permission.Admin]: t('bbb', 'admin'),
-	[Permission.Moderator]: t('bbb', 'moderator'),
-	[Permission.User]: t('bbb', 'user'),
+	[Permission.Admin]: t('boss_meeting', 'admin'),
+	[Permission.Moderator]: t('boss_meeting', 'moderator'),
+	[Permission.User]: t('boss_meeting', 'user'),
 };
 
 export function html_sanitize_and_parse(str: string): string {

@@ -1,5 +1,5 @@
 OC.L10N.register(
-    "bbb",
+    "boss_meeting",
     {
     "Public" : "ציבורי",
     "BigBlueButton Integration" : "שילוב עם BigBlueButton",

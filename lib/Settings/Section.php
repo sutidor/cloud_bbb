@@ -24,7 +24,7 @@ class Section implements IIconSection {
 	 * @return string
 	 */
 	public function getID() {
-		return 'bbb';
+		return 'boss_meeting';
 	}
 
 	/**
@@ -54,6 +54,6 @@ class Section implements IIconSection {
 	 * @return string
 	 */
 	public function getIcon() {
-		return $this->url->imagePath('bbb', 'app-dark.svg');
+		return $this->url->imagePath('boss_meeting', 'app-dark.svg');
 	}
 }

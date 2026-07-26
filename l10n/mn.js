@@ -1,5 +1,5 @@
 OC.L10N.register(
-    "bbb",
+    "boss_meeting",
     {
     "Public" : "Нийтийн",
     "Loading…" : "уншиж байна",

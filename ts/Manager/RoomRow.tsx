@@ -89,8 +89,8 @@ const RoomRow = (props: Props): JSX.Element => {
 		ev.preventDefault();
 
 		OC.dialogs.confirm(
-			t('bbb', 'Are you sure you want to delete "{name}"? This operation cannot be undone.', { name: room.name }),
-			t('bbb', 'Delete "{name}"?', { name: room.name }),
+			t('boss_meeting', 'Are you sure you want to delete "{name}"? This operation cannot be undone.', { name: room.name }),
+			t('boss_meeting', 'Delete "{name}"?', { name: room.name }),
 			confirmed => {
 				if (confirmed) {
 					props.deleteRoom(room.id);
@@ -101,19 +101,19 @@ const RoomRow = (props: Props): JSX.Element => {
 	}
 
 	function storeRoom() {
-		OC.dialogs.filepicker(t('bbb', 'Select target folder'), (path: string) => {
+		OC.dialogs.filepicker(t('boss_meeting', 'Select target folder'), (path: string) => {
 			api.storeRoom(room, path).then((filename) => {
 				OC.dialogs.info(
-					t('bbb', 'Room URL was stored in "{path}" as "{filename}".', { path: path + '/', filename }),
-					t('bbb', 'Link stored'),
+					t('boss_meeting', 'Room URL was stored in "{path}" as "{filename}".', { path: path + '/', filename }),
+					t('boss_meeting', 'Link stored'),
 					() => undefined,
 				);
 			}).catch(err => {
 				console.warn('Could not store room', err);
 
 				OC.dialogs.alert(
-					t('bbb', 'URL to room could not be stored.'),
-					t('bbb', 'Error'),
+					t('boss_meeting', 'URL to room could not be stored.'),
+					t('boss_meeting', 'Error'),
 					() => undefined,
 				);
 			});
@@ -121,19 +121,19 @@ const RoomRow = (props: Props): JSX.Element => {
 	}
 
 	function storeRecording(recording: Recording) {
-		OC.dialogs.filepicker(t('bbb', 'Select target folder'), (path: string) => {
+		OC.dialogs.filepicker(t('boss_meeting', 'Select target folder'), (path: string) => {
 			api.storeRecording(recording, path).then((filename) => {
 				OC.dialogs.info(
-					t('bbb', 'URL to presentation was stored in "{path}" as "{filename}".', { path: path + '/', filename }),
-					t('bbb', 'Link stored'),
+					t('boss_meeting', 'URL to presentation was stored in "{path}" as "{filename}".', { path: path + '/', filename }),
+					t('boss_meeting', 'Link stored'),
 					() => undefined,
 				);
 			}).catch(err => {
 				console.warn('Could not store recording', err);
 
 				OC.dialogs.alert(
-					t('bbb', 'URL to presentation could not be stored.'),
-					t('bbb', 'Error'),
+					t('boss_meeting', 'URL to presentation could not be stored.'),
+					t('boss_meeting', 'Error'),
 					() => undefined,
 				);
 			});
@@ -142,15 +142,15 @@ const RoomRow = (props: Props): JSX.Element => {
 
 	function deleteRecording(recording: Recording) {
 		OC.dialogs.confirm(
-			t('bbb', 'Are you sure you want to delete the recording from "{startDate}"? This operation cannot be undone.', { startDate: (new Date(recording.startTime)).toLocaleString() }),
-			t('bbb', 'Delete?'),
+			t('boss_meeting', 'Are you sure you want to delete the recording from "{startDate}"? This operation cannot be undone.', { startDate: (new Date(recording.startTime)).toLocaleString() }),
+			t('boss_meeting', 'Delete?'),
 			confirmed => {
 				if (confirmed) {
 					api.deleteRecording(recording.id).then(success => {
 						if (!success) {
 							OC.dialogs.info(
-								t('bbb', 'Could not delete record'),
-								t('bbb', 'Error'),
+								t('boss_meeting', 'Could not delete record'),
+								t('boss_meeting', 'Error'),
 								() => undefined,
 							);
 
@@ -166,8 +166,8 @@ const RoomRow = (props: Props): JSX.Element => {
 						console.warn('Could not delete recording', err);
 
 						OC.dialogs.info(
-							t('bbb', 'Could not delete record'),
-							t('bbb', 'Server error'),
+							t('boss_meeting', 'Could not delete record'),
+							t('boss_meeting', 'Server error'),
 							() => undefined,
 						);
 					});
@@ -192,8 +192,8 @@ const RoomRow = (props: Props): JSX.Element => {
 		}).catch(err => {
 			console.warn('Could not modify publishing state', err);
 			OC.dialogs.info(
-				t('bbb', 'Could not modify publishing state'),
-				t('bbb', 'Server error'),
+				t('boss_meeting', 'Could not modify publishing state'),
+				t('boss_meeting', 'Server error'),
 				() => undefined,
 			);
 		});
@@ -247,19 +247,19 @@ const RoomRow = (props: Props): JSX.Element => {
 						className={'button ' + (room.running ? 'success' : 'primary')}
 						target="_blank"
 						rel="noopener noreferrer"
-						title={t('bbb', 'Open room')}>
-						{room.running ? t('bbb', 'Join') : t('bbb', 'Start')}
+						title={t('boss_meeting', 'Open room')}>
+						{room.running ? t('boss_meeting', 'Join') : t('boss_meeting', 'Start')}
 					</a>
 				</td>
 				<td className="share icon-col">
 					<CopyToClipboard text={api.getRoomUrl(room)} options={{format:'text/plain'}}>
-						<button className="action-item copy-to-clipboard" title={t('bbb', 'Copy to clipboard')}>
+						<button className="action-item copy-to-clipboard" title={t('boss_meeting', 'Copy to clipboard')}>
 							<span className="icon icon-clippy icon-visible" ></span>
 						</button>
 					</CopyToClipboard>
 				</td>
 				<td className="store icon-col">
-					<button className="action-item" onClick={() => storeRoom()} title={t('bbb', 'Save as file')}>
+					<button className="action-item" onClick={() => storeRoom()} title={t('boss_meeting', 'Save as file')}>
 						<span className="icon icon-add-shortcut icon-visible"></span>
 					</button>
 				</td>
@@ -288,7 +288,7 @@ const RoomRow = (props: Props): JSX.Element => {
 					<button
 						className="action-item"
 						onClick={cloneRow}
-						title={t('bbb', 'Clone room')}>
+						title={t('boss_meeting', 'Clone room')}>
 						<span className="icon icon-template-add icon-visible"></span>
 					</button>
 					}
@@ -300,7 +300,7 @@ const RoomRow = (props: Props): JSX.Element => {
 				</td>
 				<td className="remove icon-col">
 					{adminRoom &&
-					<button className="action-item" onClick={deleteRow as any} title={t('bbb', 'Delete')}>
+					<button className="action-item" onClick={deleteRow as any} title={t('boss_meeting', 'Delete')}>
 						<span className="icon icon-delete icon-visible"></span>
 					</button>
 					}

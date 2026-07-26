@@ -30,10 +30,10 @@ const NewRoomForm = (props: Props): JSX.Element => {
 				className="newgroup-name"
 				disabled={processing}
 				value={name}
-				placeholder={t('bbb', 'Room name')}
+				placeholder={t('boss_meeting', 'Room name')}
 				onChange={(event) => { setName(event.target.value); }} />
 
-			<input type="submit" disabled={processing} value={t('bbb', 'Create')} />
+			<input type="submit" disabled={processing} value={t('boss_meeting', 'Create')} />
 
 			{error && <p>{error}</p>}
 		</form>

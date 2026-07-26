@@ -46,7 +46,7 @@ const App = () => {
 			loadRestriction(),
 			loadRooms(),
 		]).catch(() => {
-			setError(t('bbb', 'Server error'));
+			setError(t('boss_meeting', 'Server error'));
 		}).then(() => {
 			setLoaded(true);
 		});
@@ -143,7 +143,7 @@ const App = () => {
 
 	const maxRooms = restriction?.maxRooms || 0;
 	const ownRoomsLength = rooms.filter(room => room.userId === OC.currentUser).length;
-	const quota = maxRooms < 0 ? t('bbb', 'unlimited') : ownRoomsLength + ' / ' + maxRooms;
+	const quota = maxRooms < 0 ? t('boss_meeting', 'unlimited') : ownRoomsLength + ' / ' + maxRooms;
 
 	return (
 		<div id="bbb-react-root"
@@ -155,20 +155,20 @@ const App = () => {
 						<th />
 						<th />
 						<th onClick={() => onOrderBy('name')}>
-							{t('bbb', 'Name')} <SortArrow name='name' value={orderBy} direction={sortOrder} />
+							{t('boss_meeting', 'Name')} <SortArrow name='name' value={orderBy} direction={sortOrder} />
 						</th>
 						<th />
 						<th onClick={() => onOrderBy('access')} className="bbb-shrink">
-							{t('bbb', 'Access')} <SortArrow name='access' value={orderBy} direction={sortOrder} />
+							{t('boss_meeting', 'Access')} <SortArrow name='access' value={orderBy} direction={sortOrder} />
 						</th>
 						<th onClick={() => onOrderBy('maxParticipants')} className="bbb-shrink">
-							{t('bbb', 'Max')} <SortArrow name='maxParticipants' value={orderBy} direction={sortOrder} />
+							{t('boss_meeting', 'Max')} <SortArrow name='maxParticipants' value={orderBy} direction={sortOrder} />
 						</th>
 						<th onClick={() => onOrderBy('record')} className="bbb-shrink">
-							{t('bbb', 'Record')} <SortArrow name='record' value={orderBy} direction={sortOrder} />
+							{t('boss_meeting', 'Record')} <SortArrow name='record' value={orderBy} direction={sortOrder} />
 						</th>
 						<th>
-							{t('bbb', 'Recordings')}
+							{t('boss_meeting', 'Recordings')}
 						</th>
 						<th />
 						<th />
@@ -188,13 +188,13 @@ const App = () => {
 							{(maxRooms > ownRoomsLength || maxRooms < 0) ?
 								<NewRoomForm addRoom={addRoom} /> :
 								<p className="text-muted">{maxRooms === 0 ?
-									t('bbb', 'You are not permitted to create a room.') :
-									t('bbb', 'You exceeded the maximum number of rooms.')
+									t('boss_meeting', 'You are not permitted to create a room.') :
+									t('boss_meeting', 'You exceeded the maximum number of rooms.')
 								}</p>}
 						</td>
 						<td />
 						<td colSpan={3}>
-							<p className="text-muted">{t('bbb', 'Room quota:')} {quota}</p>
+							<p className="text-muted">{t('boss_meeting', 'Room quota:')} {quota}</p>
 						</td>
 					</tr>
 				</tfoot>

@@ -1,5 +1,5 @@
 <?php
-\OCP\Util::addScript('bbb', 'bbb-manager');
+\OCP\Util::addScript('boss_meeting', 'bbb-manager');
 ?>
 
 <div id="bbb-app">
