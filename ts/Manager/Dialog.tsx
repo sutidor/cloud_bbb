@@ -1,4 +1,5 @@
 import React from 'react';
+import { createPortal } from 'react-dom';
 
 type Props = {
     open: boolean;
@@ -18,7 +19,12 @@ const Dialog = ({
 		return <></>;
 	}
 
-	return (
+	// Render into <body> via a portal so the dialog escapes the surrounding
+	// table row. A `position: fixed` element anchors to the viewport only when
+	// no ancestor establishes a containing block (transform/filter/contain — any
+	// of which NC34's layout may add). Portalling to body guarantees viewport
+	// centering regardless of the mount point in the component tree.
+	return createPortal(
 		<>
 			<div className="oc-dialog-dim bbb-dialog-dim" onClick={() => onClose()}> </div>
 			<div className="oc-dialog bbb-dialog" tabIndex={-1} role="dialog">
@@ -29,8 +35,9 @@ const Dialog = ({
 					{children}
 				</div>
 			</div>
-		</>
-	);
+		</>,
+		document.body,
+	) as unknown as JSX.Element;
 };
 
 export default Dialog;
