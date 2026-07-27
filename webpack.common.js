@@ -2,6 +2,7 @@
 process.env.npm_package_name = 'bbb';
 
 const path = require('path');
+const webpack = require('webpack');
 const ESLintPlugin = require('eslint-webpack-plugin');
 const webpackConfig = require('@nextcloud/webpack-vue-config')
 const webpackRules = require('@nextcloud/webpack-vue-config/rules')
@@ -48,6 +49,9 @@ webpackConfig.entry = {
 webpackConfig.module.rules = Object.values(webpackRules);
 
 webpackConfig.plugins.push(new ESLintPlugin());
+
+// NC 34 removed the global jQuery; bundle it so the app's `$` usages resolve.
+webpackConfig.plugins.push(new webpack.ProvidePlugin({ $: 'jquery', jQuery: 'jquery' }));
 
 webpackConfig.resolve.extensions = [...webpackConfig.resolve.extensions, '.jsx', '.ts', '.tsx'];
 
