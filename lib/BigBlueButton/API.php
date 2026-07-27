@@ -138,6 +138,13 @@ class API {
 		$createMeetingParams->setLogoutURL($this->urlGenerator->getBaseUrl());
 		$createMeetingParams->setMuteOnStart($room->getJoinMuted());
 
+		// Brand the in-meeting client with our logo (BBB shows no logo by
+		// default). Public app image URL so the participant's browser can load it.
+		$logoUrl = $this->urlGenerator->getAbsoluteURL(
+			$this->urlGenerator->imagePath(Application::ID, 'meeting-logo.png')
+		);
+		$createMeetingParams->setLogo($logoUrl);
+
 		$createMeetingParams->addMeta('bbb-origin-version', $this->appManager->getAppVersion(Application::ID));
 		$createMeetingParams->addMeta('bbb-origin', \method_exists($this->defaults, 'getProductName') ? $this->defaults->getProductName() : 'Nextcloud');
 		$createMeetingParams->addMeta('bbb-origin-server-name', $this->request->getServerHost());
