@@ -20,8 +20,8 @@ const Dialog = ({
 
 	return (
 		<>
-			<div className="oc-dialog-dim" onClick={() => onClose()}> </div>
-			<div className="oc-dialog bbb-dialog" tabIndex={-1} role="dialog" style={{display:'inline-block', position: 'fixed'}}>
+			<div className="oc-dialog-dim bbb-dialog-dim" onClick={() => onClose()}> </div>
+			<div className="oc-dialog bbb-dialog" tabIndex={-1} role="dialog">
 				<h2 className="oc-dialog-title">{title}</h2>
 				<a className="oc-dialog-close" onClick={ev => {ev.preventDefault(); onClose();}}></a>
 

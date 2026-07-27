@@ -14,10 +14,31 @@
   }
 }
 
+// NC34 dropped the legacy global `.oc-dialog` centering/backdrop styles this
+// dialog used to rely on, leaving it stranded bottom-right. Own the positioning
+// here so it no longer depends on Nextcloud internals.
+.bbb-dialog-dim {
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  background: var(--color-modal-background-translucent, rgba(0, 0, 0, 0.5));
+}
+
 .oc-dialog.bbb-dialog {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
   max-height: calc(100% - 70px);
-  margin-top: 0;
+  max-width: min(560px, calc(100% - 32px));
+  width: max-content;
+  margin: 0;
   padding: 4px 24px;
+  overflow: auto;
+  background: var(--color-main-background, #fff);
+  border-radius: var(--border-radius-large, 12px);
+  box-shadow: 0 0 30px var(--color-box-shadow, rgba(0, 0, 0, 0.3));
 }
 
 .bbb-dialog {
